@@ -1,0 +1,120 @@
+:root {
+  --sidebar-background-color: #3191ef;
+  --sidebar-link-selected-color: #ffffff;
+
+  --sidebar-link-selected-text-color: #0e4c74;
+  --sidebar-link-text-color: #062539;
+  --main-content-background-color: #ffffff;
+  --sidebar-separate-color: #ffffff;
+
+  /* BreadCum */
+  --bc-background-color: #f5f7fa;
+  --bc-text-color: #b5bccc;
+}
+
+.main-layout {
+  background: var(--sidebar-background-color);
+  width: 12%;
+}
+
+#tttttt {
+  display: flex;
+  align-items: center;
+  color: var(--sidebar-link-text-color);
+  font-size: 0.8em;
+  font-weight: 650;
+  /* line-height: .5em; */
+  padding: 0.8em 1em;
+  border-radius: 8px;
+}
+
+.main-layout nav a {
+  display: flex;
+  align-items: center;
+  color: var(--sidebar-link-text-color);
+  font-size: 0.8em;
+  font-weight: 650;
+  /* line-height: .5em; */
+  padding: 0.8em 1em;
+  border-radius: 8px;
+}
+
+.main-layout nav a span {
+  margin-left: 1em;
+}
+
+.main-layout nav .active {
+  background: var(--sidebar-link-selected-color);
+  color: var(--sidebar-link-selected-text-color);
+  border-radius: 10px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.main-layout-content {
+  background: var(--main-content-background-color);
+  width: 88%;
+}
+
+.main-layout-content .top-bar {
+  height: 3%;
+  width: 100;
+  background-color: rgb(255, 255, 255);
+}
+
+.main-layout-content .content-body {
+  height: 100%;
+}
+
+/* Bread Cum */
+.layout-breadcum {
+  border: 1px solid var(--bc-text-color);
+  border-radius: 0.3rem;
+  display: inline-flex;
+  overflow: hidden;
+  height: fit-content;
+}
+
+.layout-breadcum div {
+  background: var(--bc-background-color);
+  color: rgb(103, 103, 103);
+  outline: none;
+  position: relative;
+  text-decoration: none;
+  transition: background 0.2s linear;
+}
+
+.layout-breadcum div:hover:after,
+.layout-breadcum div:hover {
+  background: var(--bc-background-color);
+}
+
+.layout-breadcum div:focus:after,
+.layout-breadcum div:focus,
+.layout-breadcum div.is-active:focus {
+  background: #323f4a;
+  color: #fff;
+}
+
+.layout-breadcum div:after,
+.layout-breadcum div:before {
+  background: var(--bc-background-color);
+  bottom: 0;
+  clip-path: polygon(50% 50%, -50% -50%, 0 100%);
+  content: "";
+  left: 100%;
+  position: absolute;
+  top: 0;
+  transition: background 0.2s linear;
+  width: 1em;
+  z-index: 1;
+}
+
+.layout-breadcum div:before {
+  background: var(--bc-text-color);
+  margin-left: 1px;
+}
+
+.layout-breadcum div:last-child {
+  border-right: none;
+  background: #d1e2f9;
+}

@@ -1,0 +1,36 @@
+.css-1fuu5fs-MuiTableCell-root {
+  text-align: left !important;
+}
+
+.css-1h2ps2h-MuiTableCell-root {
+  text-align: left !important;
+}
+
+.css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active {
+  color: white !important;
+}
+
+.MuiTableSortLabel-root:hover {
+  color: white !important;
+}
+
+.css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active
+  .MuiTableSortLabel-icon {
+  color: white !important;
+}
+
+.css-dx096b.Mui-active {
+  color: white !important;
+}
+
+.css-dx096b.Mui-active .MuiTableSortLabel-icon {
+  color: white !important;
+}
+
+.css-dx096b:focus {
+  color: white !important;
+}
+
+.css-dx096b:hover {
+  color: white !important;
+}

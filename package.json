@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@fontsource/poppins": "^5.1.0",
     "@fortawesome/fontawesome-free-regular": "^5.0.13",
     "@fortawesome/fontawesome-free-solid": "^5.0.13",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
@@ -32,6 +33,7 @@
     "jspdf-autotable": "^3.5.28",
     "moment": "^2.29.4",
     "npm": "^10.8.3",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.10.0",
     "react-dom": "^18.2.0",
@@ -46,7 +48,8 @@
     "redux-persist": "^6.0.0",
     "redux-persist-transform-encrypt": "^4.0.0",
     "xlsx": "^0.18.5",
-    "zebra-browser-print-wrapper": "^0.1.4"
+    "zebra-browser-print-wrapper": "^0.1.4",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

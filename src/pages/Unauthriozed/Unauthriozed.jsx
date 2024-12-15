@@ -3,7 +3,7 @@ import * as Ai from "react-icons/ai";
 import { useSelector } from "react-redux";
 
 import { useNavigate } from "react-router-dom";
-import { selectCurrentUser } from "../../redux/features/authSlice";
+// import { selectCurrentUser } from "../../redux/features/authSlice";
 
 // import logo from "../../assets/WeinsLogo.png";
 
@@ -11,7 +11,7 @@ import { selectCurrentUser } from "../../redux/features/authSlice";
 // import MainLayout from '../../layouts/MainLayout';
 
 const Unauthorized = () => {
-  const authUser = useSelector(selectCurrentUser);
+  // const authUser = useSelector(selectCurrentUser);
 
   useEffect(() => {
     localStorage.setItem("activepage", "unauthorized");
@@ -50,7 +50,7 @@ const Unauthorized = () => {
     // <MainLayout>
     <div>
       <div className="flex h-full justify-end mb-4 z-50 mt-5 mr-8">
-        <div className="flex space-x-2">
+        {/* <div className="flex space-x-2">
           {authUser ? (
             <div className="bg-[#30405D] shadow-md rounded-full h-8 w-8 text-white layout-border flex justify-center items-center">
               {authUser.name.split(" ").length > 1
@@ -67,7 +67,7 @@ const Unauthorized = () => {
           >
             <Ai.AiOutlineLogout />
           </button>
-        </div>
+        </div> */}
       </div>
       <div className="flex h-full w-full justify-center text-center items-center pt-28">
         <div>

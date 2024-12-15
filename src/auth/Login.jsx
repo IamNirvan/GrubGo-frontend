@@ -1,38 +1,40 @@
 import React, { useEffect, useState } from "react";
-import * as Fa from "react-icons/fa";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+// import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../redux/features/authSlice";
-import { POST, request } from "../api/ApiAdapter";
-import { useAuth } from "../context/authContext";
+import { setToken } from "../redux/features/authSlice";
+import httpMethodTypes from "../constants/httpMethodTypes";
+import useAxios from "../util/useAxios";
 import ImageLeft from "./Order food-pana.png";
+import "@fontsource/poppins";
 
 const Login = () => {
-  const { setAuth } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
     username: "",
     password: "",
   });
+  const { errorMessage, sendRequest } = useAxios();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const login = async () => {
-    const result = await request("auth/login", POST, input);
-
-    if (!result.error) {
-      localStorage.setItem("token", result.token.toString());
-      dispatch(setCredentials(result));
-      setAuth(true);
-      navigate("/page/vehicles");
-    } else {
-      toast.error(result.error.response.data);
-      if (result.error.response.status === 406) {
+    try {
+      const result = await sendRequest({
+        url: "/v1/login",
+        method: httpMethodTypes.POST,
+        data: input,
+      });
+      dispatch(setToken(result.data));
+      // navigate("/page/vehicles");
+    } catch (error) {
+      if (error.status === 401) {
         toast.error("Please enter valid user credentials");
+      } else if (error.status === 400) {
+        toast.error("Invalid inputs");
       } else {
-        toast.error(result.error.response.data.message);
+        toast.error(errorMessage);
       }
     }
   };
@@ -52,90 +54,84 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="flex bg-white rounded-lg shadow-lg overflow-hidden w-4/5 max-w-4xl">
-        {/* Left Side Illustration */}
-        <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-          {/* Replace the div below with an image or illustration component */}
-          <div className="flex items-center justify-center p-8">
-            {/* Placeholder illustration */}
-            <img src={ImageLeft} alt="Illustration" className="h-96" />
-          </div>
+    <div className="flex items-center justify-center h-screen bg-white font-[Poppins]">
+      <div className="flex w-full max-w-7xl overflow-hidden">
+        <div className="w-[50%] flex items-center justify-start">
+          <img
+            src={ImageLeft}
+            alt="Illustration"
+            className="h-auto max-h-[100%]"
+          />
         </div>
 
-        {/* Right Side Login Form */}
-        <div className="w-1/2 p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-8">
-            Log into your account
-          </h2>
+        <div className="w-[50%] p-12 flex items-center justify-center">
+          <div className="w-full max-w-sm">
+            <h2 className="text-3xl font-bold text-gray-800 mb-10">
+              Log into your account
+            </h2>
 
-          <div className="space-y-6">
-            {/* Username Field */}
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-semibold text-gray-600"
-              >
-                Username
-              </label>
-              <input
-                id="username"
-                name="username"
-                onChange={onChange}
-                value={input.username}
-                type="text"
-                placeholder="Enter Username"
-                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
+            <div className="space-y-6">
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-[16px] font-semibold text-gray-600 mb-2"
+                >
+                  Username
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  onChange={onChange}
+                  value={input.username}
+                  type="text"
+                  placeholder="Username"
+                  className="w-full px-4 py-3 border rounded-lg text-[14px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FF725E]"
+                />
+              </div>
 
-            {/* Password Field */}
-            <div className="relative">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-gray-600"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                value={input.password}
-                onChange={onChange}
-                onKeyPress={handleEnterKeypress}
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter Password"
-                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                {showPassword ? (
-                  <FaEye
-                    className="cursor-pointer text-gray-600"
-                    onClick={() => setShowPassword(false)}
-                  />
-                ) : (
-                  <FaEyeSlash
-                    className="cursor-pointer text-gray-600"
-                    onClick={() => setShowPassword(true)}
-                  />
-                )}
+              <div className="relative">
+                <label
+                  htmlFor="password"
+                  className="block text-[16px] font-semibold text-gray-600 mb-2"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  value={input.password}
+                  onChange={onChange}
+                  onKeyPress={handleEnterKeypress}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className="w-full px-4 py-3 border rounded-lg text-[14px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FF725E]"
+                />
+                {/* <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                  <div className="flex items-center h-full">
+                    {showPassword ? (
+                      <FaEye
+                        className="text-gray-600 cursor-pointer pointer-events-auto"
+                        onClick={() => setShowPassword(false)}
+                      />
+                    ) : (
+                      <FaEyeSlash
+                        className="text-gray-600 cursor-pointer pointer-events-auto"
+                        onClick={() => setShowPassword(true)}
+                      />
+                    )}
+                  </div>
+                </div> */}
               </div>
             </div>
-          </div>
-
-          {/* Login Button */}
-          <button
-            onClick={login}
-            className="w-full mt-8 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
-          >
-            Login
-          </button>
-
-          {/* Register Link */}
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600">
+            <button
+              onClick={login}
+              className="w-full mt-8 py-3 bg-[#FF725E] text-[16px] text-white font-bold rounded-lg hover:bg-[#FF725E] focus:outline-none focus:ring-2 focus:ring-[#FF725E]"
+            >
+              Login
+            </button>
+            <p className="mt-6 text-center text-[14px] text-gray-600">
               Don't have an account?{" "}
-              <a href="/page/register" className="text-red-500 font-semibold">
+              <a href="/page/register" className="font-semibold">
                 Register
               </a>
             </p>

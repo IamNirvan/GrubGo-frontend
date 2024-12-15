@@ -9,7 +9,7 @@ import * as Ai from "react-icons/ai";
 import * as Ri from "react-icons/ri";
 import * as Fa from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../redux/features/authSlice";
+// import { selectCurrentUser } from "../redux/features/authSlice";
 
 const SideBar = () => {
   const [isSubmenuVisible, setSubmenuVisibility] = useState(false);
@@ -21,7 +21,7 @@ const SideBar = () => {
   const toggleSubmenu2 = () => {
     setSubmenuVisibility2(!isSubmenuVisible2);
   };
-  const authUser = useSelector(selectCurrentUser);
+  // const authUser = useSelector(selectCurrentUser);
 
   useEffect(() => {
     if (

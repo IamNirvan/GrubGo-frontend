@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
+import styles from "./formStyles.module.css";
 
 const allergenOptions = [
   { value: "peanuts", label: "Peanuts" },
@@ -23,15 +24,28 @@ const customStyles = {
   }),
 };
 
-const AllergenDetails = ({ nextStep, prevStep }) => {
-  const [selectedAllergens, setSelectedAllergens] = useState([]);
+const AllergenDetails = ({ payload, setPayload }) => {
+  const [selectedAllergens, setSelectedAllergens] = useState(
+    payload.allergens ?? []
+  );
 
   const handleChange = (selectedOptions) => {
     setSelectedAllergens(selectedOptions);
   };
 
+  // Update the payload whenever selectedAllergens changes
+  useEffect(() => {
+    setPayload((prevVals) => ({
+      ...prevVals,
+      allergens: selectedAllergens.map((allergen) => ({
+        value: allergen.value,
+        label: allergen.label,
+      })),
+    }));
+  }, [selectedAllergens]);
+
   return (
-    <div>
+    <div className="w-[70%] h-[100%]">
       <div className="mb-4">
         <label htmlFor="allergens" className="block text-gray-700">
           Allergens (optional)
@@ -40,25 +54,13 @@ const AllergenDetails = ({ nextStep, prevStep }) => {
           id="allergens"
           isMulti
           options={allergenOptions}
-          value={selectedAllergens}
+          value={payload.allergens}
           onChange={handleChange}
           styles={customStyles}
-          className="mt-1 block w-full"
-          placeholder="Select allergens..."
+          className={styles.select}
+          placeholder="Select allergens"
         />
       </div>
-      <button
-        onClick={prevStep}
-        className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md mr-2"
-      >
-        Back
-      </button>
-      <button
-        onClick={nextStep}
-        className="bg-red-500 text-white py-2 px-4 rounded-md"
-      >
-        Next
-      </button>
     </div>
   );
 };

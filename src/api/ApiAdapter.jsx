@@ -46,7 +46,7 @@ const request = async (url, type, data, params) => {
     if (error.response) {
       if (error.response.status === 401) {
         localStorage.clear();
-        window.location.href = "/page/login";
+        window.location.href = "/customer/login";
         result = 0;
       } else {
         result = { error };

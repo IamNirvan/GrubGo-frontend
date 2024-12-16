@@ -16,6 +16,8 @@ import DishDetail from "./pages/Dishes/DishDetail";
 import Rules from "./pages/Rules/Rules";
 import RuleDetails from "./pages/Rules/RuleDetails";
 import MetricsPage from "./pages/Dishes/MetricsPage";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "./redux/features/authSlice";
 import "./app.css";
 
 function App() {
@@ -26,10 +28,10 @@ function App() {
         theme="colored"
         autoClose="3000"
       />
-      <Router>
+      {/* <Router>
         <Routes>
-          <Route path="/page/login" element={<Login />} />
-          <Route path="/page/landing" element={<Landing />} />
+          <Route path="/customer/login" element={<Login />} />
+          <Route path="/customer/home" element={<Landing />} />
           <Route path="/page/sales" element={<Sales />} />
           <Route path="/page/register" element={<Register />} />
           <Route path="/page/dishes" element={<Dishes />} />
@@ -48,12 +50,33 @@ function App() {
             }
           />
           <Route element={<PrivateRoute />}>
-            {/* <Route
-              path="/page"
-              element={<Navigate to="/page/vehicles" replace />}
-            /> */}
-            {/* <Route path="/page/vehicles" element={<Landing />} /> */}
-            <Route path="page/unauthorized" element={<Unauthorized />} />
+            <Route path="/customer/unauthorized" element={<Unauthorized />} />
+          </Route>
+        </Routes>
+      </Router> */}
+      <Router>
+        <Routes>
+          <Route path="/customer/login" element={<Login />} />
+          <Route path="/page/register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              useSelector(selectCurrentToken) === null ? (
+                <Navigate to="/customer/login" replace />
+              ) : (
+                <Navigate to="/customer/home" replace />
+              )
+            }
+          />
+          <Route element={<PrivateRoute />}>
+            <Route path="/customer/home" element={<Landing />} />
+            {/* <Route path="/page/sales" element={<Sales />} />
+            <Route path="/page/dishes" element={<Dishes />} />
+            <Route path="/page/dishes/:id" element={<DishDetail />} />
+            <Route path="/page/metrics/:id" element={<MetricsPage />} />
+            <Route path="/page/rules" element={<Rules />} />
+            <Route path="/page/rules/:id" element={<RuleDetails />} /> */}
+            <Route path="/customer/unauthorized" element={<Unauthorized />} />
           </Route>
         </Routes>
       </Router>

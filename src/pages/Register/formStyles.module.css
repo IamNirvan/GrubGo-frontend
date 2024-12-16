@@ -1,10 +1,18 @@
 /* formStyles.module.css */
 .input {
-  @apply mt-1 block w-full border-gray-300 border-2 rounded-md;
+  @apply mt-2 block h-[45px] w-[500px] bg-bg-input border-border-input border-[1px] rounded-[4px] text-[14px]  pl-[12px];
+}
+
+.select {
+  @apply mt-2 block h-[45px] w-[500px] border-border-input rounded-[4px] text-[14px];
 }
 
 .button {
-  @apply bg-red-500 text-white py-2 px-4 rounded-md;
+  @apply bg-bg-accent text-fg-activated w-[120px] h-[45px] px-4 rounded-[4px] mr-[20px];
+}
+
+.buttonBack {
+  @apply bg-gray-300 text-fg-activated w-[120px] h-[45px] px-4 rounded-[4px] mr-[20px];
 }
 
 .button-gray {

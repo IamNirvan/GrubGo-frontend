@@ -10,7 +10,7 @@ const TopBar = () => {
 
   const logout = () => {
     localStorage.clear();
-    navigate("/page/login");
+    navigate("/customer/login");
   };
 
   const settings = () => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import {
   Typography,
@@ -22,6 +22,9 @@ import {
   PointElement,
   LineElement,
 } from "chart.js";
+import { useParams } from "react-router-dom";
+import httpMethodTypes from "../../constants/httpMethodTypes";
+import useAxios from "../../util/useAxios";
 
 // Register Chart.js components
 ChartJS.register(
@@ -36,19 +39,65 @@ ChartJS.register(
 );
 
 const DishMetrics = () => {
+  const { id } = useParams();
+  const { errorMessage, loading, sendRequest } = useAxios();
   const [selectedTab, setSelectedTab] = useState(1);
-  const [cardDetails, setCardDetails] = useState({
-    unitsSoldToday: 55,
+  const [metrics, setMetrics] = useState({
+    unitsSoldToday: 5,
     unitsSoldThisQuarter: 237,
     revenueAccountedFor: 23,
+    monthlySales: [
+      {
+        month: "January",
+        unitsSold: 0,
+      },
+      {
+        month: "February",
+        unitsSold: 0,
+      },
+      {
+        month: "March",
+        unitsSold: 0,
+      },
+      {
+        month: "April",
+        unitsSold: 0,
+      },
+      {
+        month: "May",
+        unitsSold: 0,
+      },
+      {
+        month: "June",
+        unitsSold: 0,
+      },
+      {
+        month: "July",
+        unitsSold: 0,
+      },
+      {
+        month: "August",
+        unitsSold: 0,
+      },
+      {
+        month: "September",
+        unitsSold: 0,
+      },
+      {
+        month: "October",
+        unitsSold: 0,
+      },
+      {
+        month: "November",
+        unitsSold: 0,
+      },
+      {
+        month: "December",
+        unitsSold: 0,
+      },
+    ],
   });
-
-  const handleTabChange = (event, newTab) => {
-    if (newTab) setSelectedTab(newTab);
-  };
-
-  // Chart Data
-  const salesData = {
+  const [salesData, setSalesData] = useState({
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
@@ -57,20 +106,78 @@ const DishMetrics = () => {
         backgroundColor: "rgba(75,192,192,0.6)",
       },
     ],
+  });
+
+  // const [cardDetails, setCardDetails] = useState({
+  //   unitsSoldToday: 55,
+  //   unitsSoldThisQuarter: 237,
+  //   revenueAccountedFor: 23,
+  // });
+
+  // const handleTabChange = (event, newTab) => {
+  //   if (newTab) setSelectedTab(newTab);
+  // };
+
+  // Chart Data
+  // const salesData = {
+  //   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  //   datasets: [
+  //     {
+  //       label: "Sales (Units)",
+  //       data: [12, 19, 3, 5, 2, 3],
+  //       backgroundColor: "rgba(75,192,192,0.6)",
+  //     },
+  //   ],
+  // };
+
+  const loadMetrics = async () => {
+    const response = await sendRequest({
+      url: `v1/dish/metrics/${id}`,
+      method: httpMethodTypes.GET,
+    });
+
+    console.log("response", response);
+
+    setMetrics({
+      unitsSoldToday: response.data.unitsSoldToday,
+      unitsSoldThisQuarter: response.data.unitsSoldThisQuarter,
+      revenueAccountedFor: response.data.revenueAccountedFor,
+      monthlySales: [...metrics.monthlySales, ...response.data.monthlySales],
+    });
+
+    setSalesData({
+      ...salesData,
+      labels: response.data.monthlySales.map((item) => item.month),
+      datasets: [
+        {
+          ...salesData.datasets[0],
+          data: response.data.monthlySales.map((item) => item.unitsSold),
+        },
+      ],
+    });
   };
 
-  const peakHoursData = {
-    labels: ["12 AM", "6 AM", "12 PM", "6 PM", "9 PM"],
-    datasets: [
-      {
-        label: "Orders",
-        data: [10, 25, 50, 75, 40],
-        borderColor: "#FF725E",
-        backgroundColor: "rgba(255,114,94,0.4)",
-        tension: 0.3,
-      },
-    ],
-  };
+  // Load the dish metrics data
+  useEffect(() => {
+    loadMetrics();
+  }, []);
+
+  useEffect(() => {
+    console.log("Metrics", metrics);
+  }, [metrics]);
+
+  // const peakHoursData = {
+  //   labels: ["12 AM", "6 AM", "12 PM", "6 PM", "9 PM"],
+  //   datasets: [
+  //     {
+  //       label: "Orders",
+  //       data: [10, 25, 50, 75, 40],
+  //       borderColor: "#FF725E",
+  //       backgroundColor: "rgba(255,114,94,0.4)",
+  //       tension: 0.3,
+  //     },
+  //   ],
+  // };
 
   return (
     <MainLayout>
@@ -94,7 +201,7 @@ const DishMetrics = () => {
                   sx={{ textAlign: "center", backgroundColor: "#F4F4F4" }}
                 >
                   <Typography variant="h4" fontWeight="bold">
-                    {cardDetails.unitsSoldToday}
+                    {metrics.unitsSoldToday}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Units sold today
@@ -108,7 +215,7 @@ const DishMetrics = () => {
                   sx={{ textAlign: "center", backgroundColor: "#F4F4F4" }}
                 >
                   <Typography variant="h4" fontWeight="bold">
-                    {cardDetails.unitsSoldThisQuarter}
+                    {metrics.unitsSoldThisQuarter}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Units sold this quarter
@@ -122,7 +229,7 @@ const DishMetrics = () => {
                   sx={{ textAlign: "center", backgroundColor: "#F4F4F4" }}
                 >
                   <Typography variant="h4" fontWeight="bold">
-                    {`${cardDetails.revenueAccountedFor}%`}
+                    {`${metrics.revenueAccountedFor}%`}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Revenue accounted for
@@ -139,7 +246,7 @@ const DishMetrics = () => {
             </h1>
 
             {/* Tab Switch */}
-            <ToggleButtonGroup
+            {/* <ToggleButtonGroup
               value={selectedTab}
               exclusive
               onChange={handleTabChange}
@@ -147,7 +254,7 @@ const DishMetrics = () => {
             >
               <ToggleButton value={1}>Sales report</ToggleButton>
               <ToggleButton value={2}>Peak hours</ToggleButton>
-            </ToggleButtonGroup>
+            </ToggleButtonGroup> */}
 
             {/* Chart Rendering */}
             <Box
@@ -166,7 +273,8 @@ const DishMetrics = () => {
                   position: "relative", // Ensure chart fills container
                 }}
               >
-                {selectedTab === 1 ? (
+                {
+                  // selectedTab === 1 ? (
                   <Bar
                     data={salesData}
                     options={{
@@ -180,21 +288,23 @@ const DishMetrics = () => {
                       },
                     }}
                   />
-                ) : (
-                  <Line
-                    data={peakHoursData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false, // Allow chart to fill container
-                      plugins: {
-                        legend: { position: "top" },
-                      },
-                      scales: {
-                        y: { beginAtZero: true },
-                      },
-                    }}
-                  />
-                )}
+                  // )
+                  // : (
+                  //   <Line
+                  //     data={peakHoursData}
+                  //     options={{
+                  //       responsive: true,
+                  //       maintainAspectRatio: false, // Allow chart to fill container
+                  //       plugins: {
+                  //         legend: { position: "top" },
+                  //       },
+                  //       scales: {
+                  //         y: { beginAtZero: true },
+                  //       },
+                  //     }}
+                  //   />
+                  // )
+                }
               </Box>
             </Box>
           </Box>

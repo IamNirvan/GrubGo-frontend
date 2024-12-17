@@ -3,13 +3,18 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setToken } from "../redux/features/authSlice";
+import {
+  setToken,
+  selectUserType,
+  setUserType,
+} from "../redux/features/authSlice";
 import httpMethodTypes from "../constants/httpMethodTypes";
 import useAxios from "../util/useAxios";
 import ImageLeft from "./Order food-pana.png";
 import "@fontsource/poppins";
+import userTypes from "../constants/userTypes";
 
-const Login = () => {
+const Login = ({ userType }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
     username: "",
@@ -22,12 +27,20 @@ const Login = () => {
   const login = async () => {
     try {
       const result = await sendRequest({
-        url: "/v1/login",
+        url: `/v1/account/${userType}/login`,
         method: httpMethodTypes.POST,
         data: input,
       });
+
+      console.log("result", result);
+
       dispatch(setToken(result.data));
-      // navigate("/page/vehicles");
+      if (userType === userTypes.EMPLOYEE) {
+        dispatch(setUserType(userTypes.EMPLOYEE));
+        navigate("/dishes");
+      } else {
+        dispatch(setUserType(userTypes.CUSTOMER));
+      }
     } catch (error) {
       if (error.status === 401) {
         toast.error("Please enter valid user credentials");
@@ -129,12 +142,14 @@ const Login = () => {
             >
               Login
             </button>
-            <p className="mt-6 text-center text-[14px] text-gray-600">
-              Don't have an account?{" "}
-              <a href="/page/register" className="font-semibold">
-                Register
-              </a>
-            </p>
+            {userType === "customer" && (
+              <p className="mt-6 text-center text-[14px] text-gray-600">
+                Don't have an account?{" "}
+                <a href="/customer/register" className="font-semibold">
+                  Register
+                </a>
+              </p>
+            )}
           </div>
         </div>
       </div>

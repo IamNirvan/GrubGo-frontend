@@ -1,14 +1,21 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../redux/features/authSlice";
+import {
+  selectCurrentToken,
+  selectUserType,
+} from "../redux/features/authSlice";
+import { useNavigate } from "react-router-dom";
+import userTypes from "../constants/userTypes";
 
 const useAxios = (url) => {
   // Create the state to manage loading, responses, errors, etc.
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
   const token = useSelector(selectCurrentToken);
+  const userType = useSelector(selectUserType);
 
   // Create the axios instance with default options
   const axiosIntance = axios.create({
@@ -46,7 +53,8 @@ const useAxios = (url) => {
     };
 
     // Add the tken if its present
-    if (token) {
+    const regex = /\/(login|register)(\/|$)/;
+    if (token && !regex.test(url)) {
       _headers["Authorization"] = `Bearer ${token}`;
     } else {
       console.warn("No token found in local storage");
@@ -64,8 +72,13 @@ const useAxios = (url) => {
       setResponse(response);
       return response;
     } catch (error) {
-      if (error.code === 403) {
+      if (error.code === 401) {
         console.error("User is logged out. Redirecting to login page...");
+        if (userType === userTypes.CUSTOMER) {
+          navigate("/login/customer");
+        } else {
+          navigate("/login/employee");
+        }
       }
 
       if (axios.isCancel(error)) {

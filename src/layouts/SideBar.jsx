@@ -44,7 +44,7 @@ const SideBar = () => {
       <div className="h-[75%]">
         <nav className="mt-2 px-2 space-y-2">
           <NavLink
-            to="/page/dishes"
+            to="/dishes"
             className={({ isActive }) =>
               `flex items-center p-2 rounded-lg ${
                 isActive ? "bg-[#FF6F61] text-white" : "hover:bg-[#FF6F61]"

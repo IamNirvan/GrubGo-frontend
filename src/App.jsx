@@ -13,11 +13,13 @@ import Dishes from "./pages/Dishes/Dishes";
 import Unauthorized from "./pages/Unauthriozed/Unauthriozed";
 import PrivateRoute from "./routes/PrivateRoute";
 import DishDetail from "./pages/Dishes/DishDetail";
+import CreateDish from "./pages/Dishes/CreateDish";
 import Rules from "./pages/Rules/Rules";
 import RuleDetails from "./pages/Rules/RuleDetails";
 import MetricsPage from "./pages/Dishes/MetricsPage";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./redux/features/authSlice";
+import userTypes from "./constants/userTypes";
 import "./app.css";
 
 function App() {
@@ -33,7 +35,7 @@ function App() {
           <Route path="/customer/login" element={<Login />} />
           <Route path="/customer/home" element={<Landing />} />
           <Route path="/page/sales" element={<Sales />} />
-          <Route path="/page/register" element={<Register />} />
+          <Route path="/customer/register" element={<Register />} />
           <Route path="/page/dishes" element={<Dishes />} />
           <Route path="/page/dishes/:id" element={<DishDetail />} />
           <Route path="/page/metrics/:id" element={<MetricsPage />} />
@@ -56,8 +58,15 @@ function App() {
       </Router> */}
       <Router>
         <Routes>
-          <Route path="/customer/login" element={<Login />} />
-          <Route path="/page/register" element={<Register />} />
+          <Route
+            path="/employee/login"
+            element={<Login userType={userTypes.EMPLOYEE} />}
+          />
+          <Route
+            path="/customer/login"
+            element={<Login userType={userTypes.CUSTOMER} />}
+          />
+          <Route path="/customer/register" element={<Register />} />
           <Route
             path="/"
             element={
@@ -68,7 +77,7 @@ function App() {
               )
             }
           />
-          <Route element={<PrivateRoute />}>
+          <Route element={<PrivateRoute userType={userTypes.CUSTOMER} />}>
             <Route path="/customer/home" element={<Landing />} />
             {/* <Route path="/page/sales" element={<Sales />} />
             <Route path="/page/dishes" element={<Dishes />} />
@@ -77,6 +86,12 @@ function App() {
             <Route path="/page/rules" element={<Rules />} />
             <Route path="/page/rules/:id" element={<RuleDetails />} /> */}
             <Route path="/customer/unauthorized" element={<Unauthorized />} />
+          </Route>
+
+          <Route element={<PrivateRoute userType={userTypes.EMPLOYEE} />}>
+            <Route path="/dishes" element={<Dishes />} />
+            <Route path="/dishes/create" element={<CreateDish />} />
+            <Route path="/dishes/:id" element={<DishDetail />} />
           </Route>
         </Routes>
       </Router>

@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Typography,
   Button,
@@ -16,43 +16,140 @@ import {
 import MainLayout from "../../layouts/MainLayout";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAxios from "../../util/useAxios";
+import httpMethodTypes from "../../constants/httpMethodTypes";
+import { toast } from "react-toastify";
 
 const DishDetail = () => {
   const { id } = useParams();
+  const { errorMessage, loading, sendRequest } = useAxios();
+  const [imageSrc, setImageSrc] = useState("");
+  const [dish, setDish] = useState({
+    id: 0,
+    name: "",
+    description: "",
+    dishPortions: [],
+    image: "",
+    reviews: [],
+    created: "",
+    updated: "",
+  });
+  const navigate = useNavigate();
+
+  const fetchDishById = async (id) => {
+    console.log("Fetching dish by id...");
+
+    const result = await sendRequest({
+      url: `/v1/dish?id=${id}&includeImg=true`,
+      method: httpMethodTypes.GET,
+    });
+    console.log("result", result);
+
+    if (result.data[0].image) {
+      const imageDataUrl = `data:image/jpeg;base64,${result.data[0].image}`;
+      setImageSrc(imageDataUrl);
+    }
+
+    setDish({
+      id: result.data[0].id ?? "N/A",
+      name: result.data[0].name ?? "N/A",
+      description: result.data[0].description ?? "N/A",
+      dishPortions: result.data[0].dishPortions ?? [],
+      image: result.data[0].image ?? "N/A",
+      reviews: result.data[0].reviews ?? [],
+      created: result.data[0].created
+        ? result.data[0].created.split("T")[0]
+        : "N/A",
+      updated: result.data[0].updated
+        ? result.data[0].updated.split("T")[0]
+        : "N/A",
+    });
+  };
+
+  const updateDish = async () => {
+    const formData = new FormData();
+    formData.append("requests[0].id", id);
+    formData.append("requests[0].name", dish.name);
+    formData.append("requests[0].description", dish.description);
+
+    const result = await sendRequest({
+      url: `/v1/dish`,
+      method: httpMethodTypes.PATCH,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "*/*",
+      },
+      data: formData,
+    });
+
+    if (result.status === 200) {
+      toast.success("Dish updated successfully");
+    } else {
+      toast.error("Failed to update dish");
+    }
+  };
+
+  const deleteDish = async () => {
+    const result = await sendRequest({
+      url: `/v1/dish?ids=${id}`,
+      method: httpMethodTypes.DELETE,
+    });
+
+    if (result.status === 200) {
+      toast.success("Dish deleted successfully");
+      navigate("/dishes");
+    } else {
+      toast.error("Failed to delete dish");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setDish((state) => ({ ...state, [e.target.id]: e.target.value }));
+  };
+
+  useEffect(() => {
+    fetchDishById(id);
+  }, [id]);
+
+  useEffect(() => {
+    console.log("Dish", dish);
+  }, [dish]);
 
   return (
     <MainLayout>
-      <div style={{ padding: "20px" }}>
-        <Typography variant="h4" gutterBottom>
-          Dish #{id}
-        </Typography>
+      <div className="font-[Poppins] p-[50px]">
+        <h1 className="text-[30px] mb-[20px] font-bold">{`Dishes #${id}`}</h1>
         <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
           <div style={{ flex: 1 }}>
             <TextField
+              id="name"
               label="Name"
-              value="Chicken Lasagna"
+              value={dish.name}
               variant="outlined"
               fullWidth
               margin="normal"
-              disabled
+              onChange={handleInputChange}
             />
             <TextField
+              id="description"
               label="Description"
-              value="Hearty dish that layers tender chicken, creamy béchamel sauce, and rich tomato sauce"
+              value={dish.description}
               variant="outlined"
               fullWidth
               multiline
               rows={4}
               margin="normal"
-              disabled
+              onChange={handleInputChange}
             />
-            <Typography variant="h6" gutterBottom>
-              Portions
-            </Typography>
+            <h1 className="text-[25px] mt-[20px] font-bold">Portions</h1>
+            <h3 className="text-[13px] mt-[1px] mb-[30px] text-fg-deactivated">
+              All prices shown are in Sri Lankan rupees
+            </h3>
             <div>
-              {["Small", "Medium", "Large"].map((size, index) => (
+              {/* {["Small", "Medium", "Large"].map((size, index) => ( */}
+              {dish.dishPortions.map((portion, index) => (
                 <div
-                  key={size}
+                  key={index}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -61,26 +158,26 @@ const DishDetail = () => {
                   }}
                 >
                   <TextField
-                    label={size}
-                    value={`${[1800, 2800, 6100][index]} LKR`}
+                    label={portion.portionName}
+                    value={portion.price}
                     variant="outlined"
-                    disabled
                     style={{ width: "200px" }}
+                    disabled
                   />
-                  <IconButton color="primary" aria-label="edit portion">
+                  {/* <IconButton color="primary" aria-label="edit portion">
                     <EditIcon />
                   </IconButton>
                   <IconButton color="error" aria-label="delete portion">
                     <DeleteIcon />
-                  </IconButton>
+                  </IconButton> */}
                 </div>
               ))}
             </div>
           </div>
           <img
-            src="https://via.placeholder.com/150" // Replace with actual image source
+            src={imageSrc ?? "https://via.placeholder.com/150"} // Replace with actual image source
             alt="Dish"
-            style={{ borderRadius: "8px", width: "250px", height: "auto" }}
+            style={{ borderRadius: "8px", width: "500px", height: "auto" }}
           />
         </div>
         <div style={{ marginTop: "20px" }}>
@@ -88,17 +185,16 @@ const DishDetail = () => {
             variant="contained"
             color="warning"
             style={{ marginRight: "10px" }}
+            onClick={updateDish}
           >
             Update
           </Button>
-          <Button variant="contained" color="error">
+          <Button variant="contained" color="error" onClick={deleteDish}>
             Delete
           </Button>
         </div>
 
-        <Typography variant="h6" style={{ marginTop: "30px" }}>
-          Reviews
-        </Typography>
+        {/* <h1 className="text-[25px] mb-[20px] mt-[20px] font-bold">Reviews</h1>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -122,7 +218,7 @@ const DishDetail = () => {
               </TableRow>
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> */}
       </div>
     </MainLayout>
   );

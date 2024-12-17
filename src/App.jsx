@@ -16,7 +16,7 @@ import DishDetail from "./pages/Dishes/DishDetail";
 import CreateDish from "./pages/Dishes/CreateDish";
 import Rules from "./pages/Rules/Rules";
 import RuleDetails from "./pages/Rules/RuleDetails";
-import MetricsPage from "./pages/Dishes/MetricsPage";
+import DishMetrics from "./pages/Dishes/DishMetrics";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./redux/features/authSlice";
 import userTypes from "./constants/userTypes";
@@ -38,7 +38,7 @@ function App() {
           <Route path="/customer/register" element={<Register />} />
           <Route path="/page/dishes" element={<Dishes />} />
           <Route path="/page/dishes/:id" element={<DishDetail />} />
-          <Route path="/page/metrics/:id" element={<MetricsPage />} />
+          <Route path="/dish/metrics/:id" element={<DishMetrics />} />
           <Route path="/page/rules" element={<Rules />} />
           <Route path="/page/rules/:id" element={<RuleDetails />} />
           <Route
@@ -82,7 +82,7 @@ function App() {
             {/* <Route path="/page/sales" element={<Sales />} />
             <Route path="/page/dishes" element={<Dishes />} />
             <Route path="/page/dishes/:id" element={<DishDetail />} />
-            <Route path="/page/metrics/:id" element={<MetricsPage />} />
+            <Route path="/dish/metrics/:id" element={<DishMetrics />} />
             <Route path="/page/rules" element={<Rules />} />
             <Route path="/page/rules/:id" element={<RuleDetails />} /> */}
             <Route path="/customer/unauthorized" element={<Unauthorized />} />
@@ -90,8 +90,9 @@ function App() {
 
           <Route element={<PrivateRoute userType={userTypes.EMPLOYEE} />}>
             <Route path="/dishes" element={<Dishes />} />
-            <Route path="/dishes/create" element={<CreateDish />} />
-            <Route path="/dishes/:id" element={<DishDetail />} />
+            <Route path="/dish/create" element={<CreateDish />} />
+            <Route path="/dish/:id" element={<DishDetail />} />
+            <Route path="/dish/metrics/:id" element={<DishMetrics />} />
           </Route>
         </Routes>
       </Router>

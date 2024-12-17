@@ -51,16 +51,16 @@ const Dishes = () => {
   }, []);
 
   const handleRowClick = (id) => {
-    navigate(`/dishes/${id}`);
+    navigate(`/dish/${id}`);
   };
 
   const handleBarChartClick = (event, dishId) => {
     event.stopPropagation();
-    navigate(`/page/metrics/${dishId}`);
+    navigate(`/dish/metrics/${dishId}`);
   };
 
   const handleCreateDish = () => {
-    navigate("/dishes/create");
+    navigate("/dish/create");
   };
 
   return (

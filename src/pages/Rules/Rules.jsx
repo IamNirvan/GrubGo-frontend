@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   IconButton,
@@ -13,69 +13,154 @@ import {
 import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import MainLayout from "../../layouts/MainLayout";
+import useAxios from "../../util/useAxios";
+import httpMethodTypes from "../../constants/httpMethodTypes";
 
 const Rules = () => {
   const navigate = useNavigate();
+  const { sendRequest } = useAxios();
+  const [rows, setRows] = useState([]);
+
+  const loadRules = async () => {
+    console.log("Loading rules...");
+
+    const result = await sendRequest({
+      url: "/v1/rules",
+      method: httpMethodTypes.GET,
+    });
+
+    const rules = [];
+    result.data.reduce((acc, rule) => {
+      acc.push({
+        id: rule.id ?? "N/A",
+        ruleName: rule.ruleName ?? "N/A",
+        factName: rule.factName ?? "N/A",
+        created: rule.created ? rule.created.split("T")[0] : "N/A",
+        updated: rule.updated ? rule.updated.split("T")[0] : "N/A",
+      });
+      return acc;
+    }, rules);
+
+    setRows(rules);
+  };
+
+  // Load all the rules when the component mounts
+  useEffect(() => {
+    loadRules();
+  }, []);
 
   const handleRowClick = (id) => {
-    navigate(`/page/rules/${id}`);
+    navigate(`/rule/${id}`);
+  };
+
+  const handleCreateRule = () => {
+    navigate("/rule/create");
   };
 
   return (
     <MainLayout>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Rules
-      </Typography>
-      <TableContainer component={Paper} elevation={3}>
-        <Table>
-          <TableHead>
-            <TableRow style={{ backgroundColor: "#FF6B6B" }}>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                ID
-              </TableCell>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                Name
-              </TableCell>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                Fact name
-              </TableCell>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                Active
-              </TableCell>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                Created
-              </TableCell>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                Updated
-              </TableCell>
-              <TableCell style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow
-              onClick={() => handleRowClick(21)}
-              style={{ cursor: "pointer" }}
-            >
-              <TableCell>21</TableCell>
-              <TableCell>AllergenRule</TableCell>
-              <TableCell>DishDetails</TableCell>
-              <TableCell>True</TableCell>
-              <TableCell>23/07/2024</TableCell>
-              <TableCell>N/A</TableCell>
-              <TableCell>
-                <IconButton
-                  color="primary"
-                  onClick={() => console.log("Edit action")}
+      <div className="font-[Poppins] p-[50px]">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <h1 className="text-[30px] font-bold">Rules</h1>
+          <button
+            onClick={handleCreateRule}
+            className="bg-bg-accent text-fg-activated w-[120px] h-[45px] px-4 rounded-[4px]"
+          >
+            Create
+          </button>
+        </div>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow style={{ backgroundColor: "#FF6B6B" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#FF725E",
+                    color: "#FFFFFF",
+                    padding: "20px",
+                  }}
                 >
-                  <EditIcon />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  ID
+                </TableCell>
+                <TableCell
+                  style={{
+                    backgroundColor: "#FF725E",
+                    color: "#FFFFFF",
+                    padding: "20px",
+                  }}
+                >
+                  Name
+                </TableCell>
+                <TableCell
+                  style={{
+                    backgroundColor: "#FF725E",
+                    color: "#FFFFFF",
+                    padding: "20px",
+                  }}
+                >
+                  Fact name
+                </TableCell>
+                <TableCell
+                  style={{
+                    backgroundColor: "#FF725E",
+                    color: "#FFFFFF",
+                    padding: "20px",
+                  }}
+                >
+                  Created
+                </TableCell>
+                <TableCell
+                  style={{
+                    backgroundColor: "#FF725E",
+                    color: "#FFFFFF",
+                    padding: "20px",
+                  }}
+                >
+                  Updated
+                </TableCell>
+                {/* <TableCell
+                  style={{
+                    backgroundColor: "#FF725E",
+                    color: "#FFFFFF",
+                    padding: "20px",
+                  }}
+                >
+                  Actions
+                </TableCell> */}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  onClick={() => handleRowClick(row.id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{row.ruleName}</TableCell>
+                  <TableCell>{row.factName}</TableCell>
+                  <TableCell>{row.created}</TableCell>
+                  <TableCell>{row.updated}</TableCell>
+                  {/* <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => console.log("Edit action")}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell> */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     </MainLayout>
   );
 };

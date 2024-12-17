@@ -16,6 +16,7 @@ import DishDetail from "./pages/Dishes/DishDetail";
 import CreateDish from "./pages/Dishes/CreateDish";
 import Rules from "./pages/Rules/Rules";
 import RuleDetails from "./pages/Rules/RuleDetails";
+import CreateRule from "./pages/Rules/CreateRule";
 import DishMetrics from "./pages/Dishes/DishMetrics";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./redux/features/authSlice";
@@ -39,8 +40,8 @@ function App() {
           <Route path="/page/dishes" element={<Dishes />} />
           <Route path="/page/dishes/:id" element={<DishDetail />} />
           <Route path="/dish/metrics/:id" element={<DishMetrics />} />
-          <Route path="/page/rules" element={<Rules />} />
-          <Route path="/page/rules/:id" element={<RuleDetails />} />
+          <Route path="/rules" element={<Rules />} />
+          <Route path="/rules/:id" element={<RuleDetails />} />
           <Route
             path="/"
             element={
@@ -83,8 +84,8 @@ function App() {
             <Route path="/page/dishes" element={<Dishes />} />
             <Route path="/page/dishes/:id" element={<DishDetail />} />
             <Route path="/dish/metrics/:id" element={<DishMetrics />} />
-            <Route path="/page/rules" element={<Rules />} />
-            <Route path="/page/rules/:id" element={<RuleDetails />} /> */}
+            <Route path="/rules" element={<Rules />} />
+            <Route path="/rules/:id" element={<RuleDetails />} /> */}
             <Route path="/customer/unauthorized" element={<Unauthorized />} />
           </Route>
 
@@ -93,6 +94,9 @@ function App() {
             <Route path="/dish/create" element={<CreateDish />} />
             <Route path="/dish/:id" element={<DishDetail />} />
             <Route path="/dish/metrics/:id" element={<DishMetrics />} />
+            <Route path="/rules" element={<Rules />} />
+            <Route path="/rule/:id" element={<RuleDetails />} />
+            <Route path="/rule/create" element={<CreateRule />} />
           </Route>
         </Routes>
       </Router>

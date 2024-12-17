@@ -56,7 +56,7 @@ const SideBar = () => {
           </NavLink>
 
           <NavLink
-            to="/page/rules"
+            to="/rules"
             className={({ isActive }) =>
               `flex items-center p-2 rounded-lg ${
                 isActive ? "bg-[#FF6F61] text-white" : "hover:bg-[#FF6F61]"

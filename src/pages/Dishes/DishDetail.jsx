@@ -43,7 +43,6 @@ const DishDetail = () => {
       url: `/v1/dish?id=${id}&includeImg=true`,
       method: httpMethodTypes.GET,
     });
-    console.log("result", result);
 
     if (result.data[0].image) {
       const imageDataUrl = `data:image/jpeg;base64,${result.data[0].image}`;

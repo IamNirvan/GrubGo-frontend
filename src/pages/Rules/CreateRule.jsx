@@ -7,72 +7,44 @@ import useAxios from "../../util/useAxios";
 import httpMethodTypes from "../../constants/httpMethodTypes";
 import { toast } from "react-toastify";
 
-const RuleDetails = () => {
+const CreateRule = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { sendRequest } = useAxios();
   const [rule, setRule] = useState({
-    id: 0,
     ruleName: "",
-    factName: "",
+    fact: "",
     rule: "",
   });
-
-  const fetchRuleById = async (id) => {
-    const result = await sendRequest({
-      url: `/v1/rules?id=${id}`,
-      method: httpMethodTypes.GET,
-    });
-
-    setRule({
-      id: result.data[0]?.id ?? "N/A",
-      ruleName: result.data[0]?.ruleName ?? "N/A",
-      factName: result.data[0]?.factName ?? "N/A",
-      rule: result.data[0]?.rule ?? "N/A",
-    });
-  };
 
   const handleEditorChange = (value) => {
     setRule({ ...rule, rule: value });
   };
 
-  const handleUpdate = async () => {
-    await sendRequest({
-      url: `/v1/rules`,
-      method: httpMethodTypes.PUT,
-      data: [
-        {
-          id: rule.id,
-          ruleName: rule.ruleName,
-          rule: rule.rule,
-        },
-      ],
-    });
-    toast.success("Rule updated successfully");
-  };
+  const handleCreateDish = async () => {
+    if (!rule.ruleName || !rule.fact || !rule.rule) {
+      toast.error("Please fill in all fields");
+      return;
+    }
 
-  const handleDelete = async () => {
     const result = await sendRequest({
-      url: `/v1/rules?ids=${id}`,
-      method: httpMethodTypes.DELETE,
+      url: `/v1/rules`,
+      method: httpMethodTypes.POST,
+      data: [rule],
     });
 
     if (result.status === 200) {
-      toast.success("Rule deleted successfully");
+      toast.success("Rule created successfully");
       navigate("/rules");
     } else {
-      toast.error("Failed to delete rule");
+      toast.error("Failed to create rule");
     }
   };
-
-  useEffect(() => {
-    fetchRuleById(id);
-  }, [id]);
 
   return (
     <MainLayout>
       <div className="font-[Poppins] p-[50px]">
-        <h1 className="text-[30px] mb-[20px] font-bold">{`Rule #${id}`}</h1>
+        <h1 className="text-[30px] mb-[20px] font-bold">Create Rule</h1>
         <div>
           {/* Rule Name */}
           <TextField
@@ -88,10 +60,10 @@ const RuleDetails = () => {
           {/* Fact */}
           <TextField
             id="factName"
-            label="Fact"
+            label="Fact Name"
             name="factName"
-            value={rule.factName}
-            disabled
+            value={rule.fact}
+            onChange={(e) => setRule({ ...rule, fact: e.target.value })}
             fullWidth
             margin="normal"
           />
@@ -124,17 +96,12 @@ const RuleDetails = () => {
 
           {/* Action Buttons */}
           <div style={{ marginTop: "20px" }}>
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={handleUpdate}
-              style={{ marginRight: "10px" }}
+            <button
+              onClick={handleCreateDish}
+              className="bg-bg-accent text-fg-activated w-[120px] h-[45px] px-4 rounded-[4px] mr-[20px]"
             >
-              Update
-            </Button>
-            <Button variant="contained" color="error" onClick={handleDelete}>
-              Delete
-            </Button>
+              Create
+            </button>
           </div>
         </div>
       </div>
@@ -142,4 +109,4 @@ const RuleDetails = () => {
   );
 };
 
-export default RuleDetails;
+export default CreateRule;

@@ -14,7 +14,7 @@ const TopBar = () => {
   };
 
   const settings = () => {
-    navigate("/page/settings");
+    navigate("/v1/customer/profile");
   };
 
   const toggleCart = () => {

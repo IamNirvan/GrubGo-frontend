@@ -7,6 +7,7 @@ const LocationDetails = ({ payload, setPayload }) => {
     city: payload.addresses[0].city,
     province: payload.addresses[0].province,
     street: payload.addresses[0].street,
+    isMain: true,
   });
 
   const handleInputChange = (e) => {

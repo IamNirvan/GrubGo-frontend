@@ -67,7 +67,7 @@ const CartModal = ({ onClose }) => {
   };
 
   const handleCheckoutOnClick = () => {
-    navigate();
+    navigate("/v1/customer/checkout");
   };
 
   return (

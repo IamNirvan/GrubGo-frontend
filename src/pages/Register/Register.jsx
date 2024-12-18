@@ -55,7 +55,7 @@ const Register = () => {
 
     try {
       await sendRequest({
-        url: "/v1/v1/customer/register",
+        url: "/v1/customer/register",
         method: httpMethodTypes.POST,
         data: {
           ...payload,

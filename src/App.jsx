@@ -19,10 +19,12 @@ import CreateRule from "./pages/Rules/CreateRule";
 import DishMetrics from "./pages/Dishes/DishMetrics";
 import Orders from "./pages/Orders/Orders";
 import BrowseDishes from "./pages/Dishes/BrowseDishes";
+import Checkout from "./pages/Checkout/Checkout";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./redux/features/authSlice";
 import userTypes from "./constants/userTypes";
 import "./app.css";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -75,12 +77,14 @@ function App() {
               useSelector(selectCurrentToken) === null ? (
                 <Navigate to="/v1/customer/login" replace />
               ) : (
-                <Navigate to="/customer/home" replace />
+                <Navigate to="/v1/customer/dishes" replace />
               )
             }
           />
           <Route element={<PrivateRoute userType={userTypes.CUSTOMER} />}>
             <Route path="/v1/customer/dishes" element={<BrowseDishes />} />
+            <Route path="/v1/customer/checkout" element={<Checkout />} />
+            <Route path="/v1/customer/profile" element={<Profile />} />
             <Route path="/customer/unauthorized" element={<Unauthorized />} />
           </Route>
 

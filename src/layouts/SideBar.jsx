@@ -67,6 +67,18 @@ const SideBar = () => {
             <span>Rules</span>
           </NavLink>
 
+          <NavLink
+            to="/v1/orders"
+            className={({ isActive }) =>
+              `flex items-center p-2 rounded-lg ${
+                isActive ? "bg-[#FF6F61] text-white" : "hover:bg-[#FF6F61]"
+              }`
+            }
+          >
+            <Bs.BsPrinter className="text-[18px] mr-2" />
+            <span>Orders</span>
+          </NavLink>
+
           {/* <NavLink
             to="/page/printbystock"
             className={({ isActive }) =>

@@ -18,6 +18,7 @@ import Rules from "./pages/Rules/Rules";
 import RuleDetails from "./pages/Rules/RuleDetails";
 import CreateRule from "./pages/Rules/CreateRule";
 import DishMetrics from "./pages/Dishes/DishMetrics";
+import Orders from "./pages/Orders/Orders";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./redux/features/authSlice";
 import userTypes from "./constants/userTypes";
@@ -97,6 +98,7 @@ function App() {
             <Route path="/rules" element={<Rules />} />
             <Route path="/rule/:id" element={<RuleDetails />} />
             <Route path="/rule/create" element={<CreateRule />} />
+            <Route path="/v1/orders" element={<Orders />} />
           </Route>
         </Routes>
       </Router>

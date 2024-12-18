@@ -55,14 +55,14 @@ const Register = () => {
 
     try {
       await sendRequest({
-        url: "/v1/customer/register",
+        url: "/v1/v1/customer/register",
         method: httpMethodTypes.POST,
         data: {
           ...payload,
           allergens: payload.allergens.map((allergen) => allergen.value),
         },
       });
-      navigate("/customer/login");
+      navigate("/v1/customer/login");
     } catch (error) {
       console.error(error);
       toast.error(errorMessage);

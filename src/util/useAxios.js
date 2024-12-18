@@ -52,13 +52,13 @@ const useAxios = (url) => {
       ...headers,
     };
 
-    // Add the tken if its present
-    // const regex = /\/(login|register)(\/|$)/;
-    // if (token && !regex.test(url)) {
-    //   _headers["Authorization"] = `Bearer ${token}`;
-    // } else {
-    //   console.warn("No token found in local storage");
-    // }
+    // Add the token if its present
+    const regex = /\/(login|register)(\/|$)/;
+    if (token && !regex.test(url)) {
+      _headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      console.warn("No token found in local storage");
+    }
 
     // Send request and handle response
     try {
@@ -75,7 +75,7 @@ const useAxios = (url) => {
       if (error.status === 401) {
         console.error("User is logged out. Redirecting to login page...");
         if (userType === userTypes.CUSTOMER) {
-          navigate("/customer/login");
+          navigate("/v1/customer/login");
         } else {
           navigate("/employee/login");
         }

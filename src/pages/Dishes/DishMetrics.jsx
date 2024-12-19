@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
-import {
-  Typography,
-  Button,
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
-import { Bar, Line } from "react-chartjs-2";
+import { Typography, Box, Card, CardContent, Grid } from "@mui/material";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,6 +16,7 @@ import {
 import { useParams } from "react-router-dom";
 import httpMethodTypes from "../../constants/httpMethodTypes";
 import useAxios from "../../util/useAxios";
+import SentimentCard from "../../components/SentimentCard";
 
 // Register Chart.js components
 ChartJS.register(
@@ -107,36 +99,13 @@ const DishMetrics = () => {
       },
     ],
   });
-
-  // const [cardDetails, setCardDetails] = useState({
-  //   unitsSoldToday: 55,
-  //   unitsSoldThisQuarter: 237,
-  //   revenueAccountedFor: 23,
-  // });
-
-  // const handleTabChange = (event, newTab) => {
-  //   if (newTab) setSelectedTab(newTab);
-  // };
-
-  // Chart Data
-  // const salesData = {
-  //   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-  //   datasets: [
-  //     {
-  //       label: "Sales (Units)",
-  //       data: [12, 19, 3, 5, 2, 3],
-  //       backgroundColor: "rgba(75,192,192,0.6)",
-  //     },
-  //   ],
-  // };
+  const [sentimentAnalysisResults, setSentimentAnalysisResults] = useState([]);
 
   const loadMetrics = async () => {
     const response = await sendRequest({
-      url: `v1/dish/metrics/${id}`,
+      url: `/v1/dish/metrics/${id}`,
       method: httpMethodTypes.GET,
     });
-
-    console.log("response", response);
 
     setMetrics({
       unitsSoldToday: response.data.unitsSoldToday,
@@ -157,27 +126,22 @@ const DishMetrics = () => {
     });
   };
 
-  // Load the dish metrics data
+  const loadSentimentAnalysisResults = async () => {
+    const response = await sendRequest({
+      url: `/v1/analyse/reviews/sentiment/dish/${id}`,
+      method: httpMethodTypes.POST,
+    });
+    setSentimentAnalysisResults(response.data);
+  };
+
   useEffect(() => {
     loadMetrics();
+    loadSentimentAnalysisResults();
   }, []);
 
   useEffect(() => {
     console.log("Metrics", metrics);
   }, [metrics]);
-
-  // const peakHoursData = {
-  //   labels: ["12 AM", "6 AM", "12 PM", "6 PM", "9 PM"],
-  //   datasets: [
-  //     {
-  //       label: "Orders",
-  //       data: [10, 25, 50, 75, 40],
-  //       borderColor: "#FF725E",
-  //       backgroundColor: "rgba(255,114,94,0.4)",
-  //       tension: 0.3,
-  //     },
-  //   ],
-  // };
 
   return (
     <MainLayout>
@@ -320,34 +284,37 @@ const DishMetrics = () => {
             borderLeft: "1px solid #E0E0E0",
             paddingLeft: 2,
             height: "100%",
+            alignItems: "flex-start",
+            overflowY: "auto",
           }}
         >
-          <Typography variant="h6" fontWeight="bold">
-            ASBA results
-          </Typography>
+          <h1 className="text-[30px] font-bold mt-[20px] mb-[20px]">
+            ASBA Results
+          </h1>
 
-          {/* Positive & Negative Buttons */}
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              variant="contained"
-              disabled
-              sx={{ backgroundColor: "#E0E0E0", color: "#6B6B6B" }}
-            >
-              Positive (12)
-            </Button>
-            <Button variant="contained" sx={{ backgroundColor: "#FF725E" }}>
-              Negative (7)
-            </Button>
-          </Box>
-
-          {/* Placeholder for ASBA chart */}
+          {/* Container for Sentiment Analysis Cards */}
           <Box
             sx={{
-              backgroundColor: "#D9D9D9",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              width: "100%",
+              backgroundColor: "#F4F4F4",
               borderRadius: "4px",
+              padding: "10px",
               flex: 1,
             }}
-          />
+          >
+            {sentimentAnalysisResults.map((item, index) => (
+              <SentimentCard
+                key={index}
+                aspect={item.span}
+                positive={item.positiveRatio}
+                neutral={item.neutralRatio}
+                negative={item.negativeRatio}
+              />
+            ))}
+          </Box>
         </Box>
       </Box>
     </MainLayout>

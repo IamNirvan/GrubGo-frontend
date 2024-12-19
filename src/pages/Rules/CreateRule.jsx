@@ -35,7 +35,7 @@ const CreateRule = () => {
 
     if (result.status === 200) {
       toast.success("Rule created successfully");
-      navigate("/rules");
+      navigate("/v1/rules");
     } else {
       toast.error("Failed to create rule");
     }

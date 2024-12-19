@@ -10,7 +10,7 @@ const determineLoginURL = (userType) => {
   }
 
   if (userType === userTypes.EMPLOYEE) {
-    return "/employee/login";
+    return "/v1/employee/login";
   }
 };
 

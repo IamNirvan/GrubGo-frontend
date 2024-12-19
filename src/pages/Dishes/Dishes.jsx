@@ -60,7 +60,7 @@ const Dishes = () => {
   };
 
   const handleCreateDish = () => {
-    navigate("/dish/create");
+    navigate("/v1/dish/create");
   };
 
   return (

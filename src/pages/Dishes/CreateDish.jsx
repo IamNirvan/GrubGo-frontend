@@ -4,15 +4,22 @@ import {
   Typography,
   Button,
   TextField,
-  Checkbox,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  Chip,
+  Box,
   FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import MainLayout from "../../layouts/MainLayout";
 import useAxios from "../../util/useAxios";
 import httpMethodTypes from "../../constants/httpMethodTypes";
 import { toast } from "react-toastify";
+import ingredients from "../../constants/ingredients";
 
 const CreateDish = () => {
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
   const { errorMessage, sendRequest } = useAxios();
   const [imageSrc, setImageSrc] = useState("");
   const [selectedImage, setSelectedImage] = useState(null); // For the image file
@@ -116,6 +123,12 @@ const CreateDish = () => {
       formData.append("requests[0].image", selectedImage);
     }
 
+    if (selectedIngredients) {
+      selectedIngredients.map((ingredient) => {
+        formData.append("requests[0].ingredients", ingredient);
+      });
+    }
+
     try {
       const response = await sendRequest({
         url: `/v1/dish`,
@@ -129,7 +142,7 @@ const CreateDish = () => {
       if (response.status === 201) {
         console.log("Dish created successfully:", response.data);
         toast.success("Dish created successfully");
-        navigate("/dishes");
+        navigate("/v1/dishes");
       } else {
         console.error("Failed to create dish:", response);
         toast.error("Failed to create dish");
@@ -138,6 +151,21 @@ const CreateDish = () => {
       console.error("Error creating dish:", error);
       toast.error("Failed to create dish");
     }
+  };
+
+  const handleIngredientsChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedIngredients(
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
+  const handleDeleteIngredient = (ingredientToDelete) => {
+    setSelectedIngredients((ingredients) =>
+      ingredients.filter((ingredient) => ingredient !== ingredientToDelete)
+    );
   };
 
   return (
@@ -166,6 +194,35 @@ const CreateDish = () => {
               margin="normal"
               onChange={handleInputChange}
             />
+            <Typography variant="h6" gutterBottom>
+              Ingredients
+            </Typography>
+            <Select
+              id="ingredients"
+              multiple
+              value={selectedIngredients}
+              onChange={handleIngredientsChange}
+              input={<OutlinedInput label="Ingredients" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip
+                      key={value}
+                      label={value}
+                      onDelete={() => handleDeleteIngredient(value)}
+                      sx={{ cursor: "pointer" }}
+                    />
+                  ))}
+                </Box>
+              )}
+              fullWidth
+            >
+              {ingredients.map((ingredient) => (
+                <MenuItem key={ingredient.value} value={ingredient.label}>
+                  {ingredient.label}
+                </MenuItem>
+              ))}
+            </Select>
             <h1 className="text-[25px] mt-[20px] font-bold">Portions</h1>
             <div>
               {supportedPortions.map((portion) => (

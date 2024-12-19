@@ -126,7 +126,7 @@ const Reviews = () => {
     }
   };
 
-  return (
+  return rows ? (
     <div className="w-[90%] h-[100%] font-[Poppins]">
       {/* Table for dishes */}
       <TableContainer component={Paper}>
@@ -227,6 +227,8 @@ const Reviews = () => {
         </DialogActions>
       </Dialog>
     </div>
+  ) : (
+    <h1 className="text-[30px] mb-[20px]">No pending reviews</h1>
   );
 };
 

@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Login from "./auth/Login";
-import Landing from "./pages/Landing/Landing";
 import Register from "./pages/Register/Register";
 import Dishes from "./pages/Dishes/Dishes";
 import Unauthorized from "./pages/Unauthriozed/Unauthriozed";
@@ -34,36 +33,10 @@ function App() {
         theme="colored"
         autoClose="3000"
       />
-      {/* <Router>
-        <Routes>
-          <Route path="/v1/customer/login" element={<Login />} />
-          <Route path="/customer/home" element={<Landing />} />
-          <Route path="/v1/customer/dishes" element={<Sales />} />
-          <Route path="/v1/customer/register" element={<Register />} />
-          <Route path="/page/dishes" element={<Dishes />} />
-          <Route path="/page/dishes/:id" element={<DishDetail />} />
-          <Route path="/dish/metrics/:id" element={<DishMetrics />} />
-          <Route path="/rules" element={<Rules />} />
-          <Route path="/rules/:id" element={<RuleDetails />} />
-          <Route
-            path="/"
-            element={
-              localStorage.getItem("token") !== null ? (
-                <Navigate to="/page/vehicles" replace />
-              ) : (
-                <Login />
-              )
-            }
-          />
-          <Route element={<PrivateRoute />}>
-            <Route path="/customer/unauthorized" element={<Unauthorized />} />
-          </Route>
-        </Routes>
-      </Router> */}
       <Router>
         <Routes>
           <Route
-            path="/employee/login"
+            path="/v1/employee/login"
             element={<Login userType={userTypes.EMPLOYEE} />}
           />
           <Route
@@ -73,29 +46,26 @@ function App() {
           <Route path="/v1/customer/register" element={<Register />} />
           <Route
             path="/"
-            element={
-              useSelector(selectCurrentToken) === null ? (
-                <Navigate to="/v1/customer/login" replace />
-              ) : (
-                <Navigate to="/v1/customer/dishes" replace />
-              )
-            }
+            element={<Navigate to="/v1/customer/login" replace />}
           />
           <Route element={<PrivateRoute userType={userTypes.CUSTOMER} />}>
             <Route path="/v1/customer/dishes" element={<BrowseDishes />} />
             <Route path="/v1/customer/checkout" element={<Checkout />} />
             <Route path="/v1/customer/profile" element={<Profile />} />
-            <Route path="/customer/unauthorized" element={<Unauthorized />} />
+            <Route
+              path="/v1/customer/unauthorized"
+              elRuntimeExceptionement={<Unauthorized />}
+            />
           </Route>
 
           <Route element={<PrivateRoute userType={userTypes.EMPLOYEE} />}>
-            <Route path="/dishes" element={<Dishes />} />
-            <Route path="/dish/create" element={<CreateDish />} />
-            <Route path="/dish/:id" element={<DishDetail />} />
-            <Route path="/dish/metrics/:id" element={<DishMetrics />} />
-            <Route path="/rules" element={<Rules />} />
-            <Route path="/rule/:id" element={<RuleDetails />} />
-            <Route path="/rule/create" element={<CreateRule />} />
+            <Route path="/v1/dishes" element={<Dishes />} />
+            <Route path="/v1/dish/create" element={<CreateDish />} />
+            <Route path="/v1/dish/:id" element={<DishDetail />} />
+            <Route path="/v1/dish/metrics/:id" element={<DishMetrics />} />
+            <Route path="/v1/rules" element={<Rules />} />
+            <Route path="/v1/rule/:id" element={<RuleDetails />} />
+            <Route path="/v1/rule/create" element={<CreateRule />} />
             <Route path="/v1/orders" element={<Orders />} />
           </Route>
         </Routes>

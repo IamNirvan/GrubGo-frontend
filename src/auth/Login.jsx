@@ -38,7 +38,7 @@ const Login = ({ userType }) => {
       dispatch(setUserInfo(result.data.userInfo));
       if (userType === userTypes.EMPLOYEE) {
         dispatch(setUserType(userTypes.EMPLOYEE));
-        navigate("/dishes");
+        navigate("/v1/dishes");
       } else {
         dispatch(setUserType(userTypes.CUSTOMER));
         navigate("/v1/customer/dishes");

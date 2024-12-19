@@ -4,26 +4,25 @@ import {
   Typography,
   Button,
   TextField,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  Chip,
+  Box,
 } from "@mui/material";
 import MainLayout from "../../layouts/MainLayout";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../util/useAxios";
 import httpMethodTypes from "../../constants/httpMethodTypes";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectUserInfo } from "../../redux/features/authSlice";
+import ingredients from "../../constants/ingredients";
 
 const DishDetail = () => {
   const { id } = useParams();
-  const { errorMessage, loading, sendRequest } = useAxios();
+  const { sendRequest } = useAxios();
   const [imageSrc, setImageSrc] = useState("");
+  const userInfo = useSelector(selectUserInfo);
   const [dish, setDish] = useState({
     id: 0,
     name: "",
@@ -33,12 +32,14 @@ const DishDetail = () => {
     reviews: [],
     created: "",
     updated: "",
+    ingredients: [],
   });
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
   const navigate = useNavigate();
 
-  const fetchDishById = async (id) => {
-    console.log("Fetching dish by id...");
+  // const ingredientsList = ["Salt", "Pepper", "Cheese", "Tomato", "Basil"]; // Example options
 
+  const fetchDishById = async (id) => {
     const result = await sendRequest({
       url: `/v1/dish?id=${id}&includeImg=true`,
       method: httpMethodTypes.GET,
@@ -56,6 +57,7 @@ const DishDetail = () => {
       dishPortions: result.data[0].dishPortions ?? [],
       image: result.data[0].image ?? "N/A",
       reviews: result.data[0].reviews ?? [],
+      ingredients: result.data[0].ingredients ?? [],
       created: result.data[0].created
         ? result.data[0].created.split("T")[0]
         : "N/A",
@@ -63,6 +65,7 @@ const DishDetail = () => {
         ? result.data[0].updated.split("T")[0]
         : "N/A",
     });
+    setSelectedIngredients(result.data[0].ingredients ?? []);
   };
 
   const updateDish = async () => {
@@ -70,6 +73,12 @@ const DishDetail = () => {
     formData.append("requests[0].id", id);
     formData.append("requests[0].name", dish.name);
     formData.append("requests[0].description", dish.description);
+
+    if (selectedIngredients) {
+      selectedIngredients.map((ingredient) => {
+        formData.append("requests[0].ingredients", ingredient);
+      });
+    }
 
     const result = await sendRequest({
       url: `/v1/dish`,
@@ -96,7 +105,7 @@ const DishDetail = () => {
 
     if (result.status === 200) {
       toast.success("Dish deleted successfully");
-      navigate("/dishes");
+      navigate("/v1/dishes");
     } else {
       toast.error("Failed to delete dish");
     }
@@ -106,12 +115,27 @@ const DishDetail = () => {
     setDish((state) => ({ ...state, [e.target.id]: e.target.value }));
   };
 
+  const handleIngredientsChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedIngredients(
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
+  const handleDeleteIngredient = (ingredientToDelete) => {
+    setSelectedIngredients((ingredients) =>
+      ingredients.filter((ingredient) => ingredient !== ingredientToDelete)
+    );
+  };
+
   useEffect(() => {
     fetchDishById(id);
   }, [id]);
 
   useEffect(() => {
-    console.log("Dish", dish);
+    console.log("dish ", dish);
   }, [dish]);
 
   return (
@@ -140,12 +164,40 @@ const DishDetail = () => {
               margin="normal"
               onChange={handleInputChange}
             />
+            <Typography variant="h6" gutterBottom>
+              Ingredients
+            </Typography>
+            <Select
+              id="ingredients"
+              multiple
+              value={selectedIngredients}
+              onChange={handleIngredientsChange}
+              input={<OutlinedInput label="Ingredients" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip
+                      key={value}
+                      label={value}
+                      onDelete={() => handleDeleteIngredient(value)}
+                      sx={{ cursor: "pointer" }}
+                    />
+                  ))}
+                </Box>
+              )}
+              fullWidth
+            >
+              {ingredients.map((ingredient) => (
+                <MenuItem key={ingredient.value} value={ingredient.label}>
+                  {ingredient.label}
+                </MenuItem>
+              ))}
+            </Select>
             <h1 className="text-[25px] mt-[20px] font-bold">Portions</h1>
             <h3 className="text-[13px] mt-[1px] mb-[30px] text-fg-deactivated">
               All prices shown are in Sri Lankan rupees
             </h3>
             <div>
-              {/* {["Small", "Medium", "Large"].map((size, index) => ( */}
               {dish.dishPortions.map((portion, index) => (
                 <div
                   key={index}
@@ -163,18 +215,12 @@ const DishDetail = () => {
                     style={{ width: "200px" }}
                     disabled
                   />
-                  {/* <IconButton color="primary" aria-label="edit portion">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton color="error" aria-label="delete portion">
-                    <DeleteIcon />
-                  </IconButton> */}
                 </div>
               ))}
             </div>
           </div>
           <img
-            src={imageSrc ?? "https://via.placeholder.com/150"} // Replace with actual image source
+            src={imageSrc ?? "https://via.placeholder.com/150"}
             alt="Dish"
             style={{ borderRadius: "8px", width: "500px", height: "auto" }}
           />
@@ -192,32 +238,6 @@ const DishDetail = () => {
             Delete
           </Button>
         </div>
-
-        {/* <h1 className="text-[25px] mb-[20px] mt-[20px] font-bold">Reviews</h1>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Content</TableCell>
-                <TableCell>Rating</TableCell>
-                <TableCell>Created</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>71</TableCell>
-                <TableCell>Delicious Lasagna!</TableCell>
-                <TableCell>
-                  The chicken lasagna was absolutely delicious!
-                </TableCell>
-                <TableCell>3</TableCell>
-                <TableCell>23/07/2024</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer> */}
       </div>
     </MainLayout>
   );

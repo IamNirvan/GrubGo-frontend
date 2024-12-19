@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import styles from "./formStyles.module.css";
+import ingredients from "../../constants/ingredients";
 
-const allergenOptions = [
-  { value: "peanuts", label: "Peanuts" },
-  { value: "shellfish", label: "Shellfish" },
-  { value: "eggs", label: "Eggs" },
-  { value: "milk", label: "Milk" },
-  { value: "soy", label: "Soy" },
-  { value: "wheat", label: "Wheat" },
-  // Add more allergens as needed
-];
+// const allergenOptions = [
+//   { value: "peanuts", label: "Peanuts" },
+//   { value: "shellfish", label: "Shellfish" },
+//   { value: "eggs", label: "Eggs" },
+//   { value: "milk", label: "Milk" },
+//   { value: "soy", label: "Soy" },
+//   { value: "wheat", label: "Wheat" },
+//   // Add more allergens as needed
+// ];
 
 const customStyles = {
   control: (provided) => ({
@@ -53,7 +54,7 @@ const AllergenDetails = ({ payload, setPayload }) => {
         <Select
           id="allergens"
           isMulti
-          options={allergenOptions}
+          options={ingredients}
           value={payload.allergens}
           onChange={handleChange}
           styles={customStyles}

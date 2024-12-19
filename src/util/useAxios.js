@@ -74,11 +74,7 @@ const useAxios = (url) => {
     } catch (error) {
       if (error.status === 401) {
         console.error("User is logged out. Redirecting to login page...");
-        if (userType === userTypes.CUSTOMER) {
-          navigate("/v1/customer/login");
-        } else {
-          navigate("/employee/login");
-        }
+        navigate("/v1/customer/login");
       }
 
       if (axios.isCancel(error)) {

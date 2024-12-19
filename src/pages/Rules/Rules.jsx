@@ -54,7 +54,7 @@ const Rules = () => {
   };
 
   const handleCreateRule = () => {
-    navigate("/rule/create");
+    navigate("/v1/rule/create");
   };
 
   return (

@@ -12,25 +12,36 @@ import {
   Dialog,
   TextField,
   Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TopBar from "../../layouts/TopBar";
 import useAxios from "../../util/useAxios";
 import httpMethodTypes from "../../constants/httpMethodTypes";
 import "@fontsource/poppins";
 import { selectUserInfo } from "../../redux/features/authSlice";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Sales = () => {
   const userInfo = useSelector(selectUserInfo);
   const { sendRequest } = useAxios();
-
   const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [selectedDish, setSelectedDish] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addToCartDetails, setAddToCartDetails] = useState({
     dishPortionId: 0,
     quantity: 0,
   });
+  const [ruleEvaluationResult, setRuleEvaluationResult] = useState({
+    tags: [],
+    suggestions: [],
+  });
+  const [bgTagColorMapping, setBgTagColorMapping] = useState(new Map());
 
   const loadDishes = async () => {
     const result = await sendRequest({
@@ -41,12 +52,73 @@ const Sales = () => {
       id: dish.id ?? "N/A",
       name: dish.name ?? "N/A",
       description: dish.description ?? "N/A",
-      image: dish.image ? `data:image/jpeg;base64,${dish.image}` : null,
+      image: dish.image
+        ? `data:image/jpeg;base64,${dish.image}`
+        : "/images/dishes/no-image.png",
       price: dish.dishPortions[0]?.price ?? "N/A",
       noOfPortions: dish.dishPortions.length ?? 0,
       dishPortions: dish.dishPortions,
     }));
     setRows(dishes);
+    setFilteredRows(dishes);
+  };
+
+  const evaluateRules = async (dishId) => {
+    const customerId = userInfo.id;
+    if (!customerId) {
+      console.warn("Failed to evaluate rules... customer ID not found");
+      toast.warn("Failed to evaluate rules");
+      return;
+    }
+
+    try {
+      const response = await sendRequest({
+        url: "/v1/rules/evaluate",
+        method: httpMethodTypes.POST,
+        data: {
+          customerId,
+          dishId,
+        },
+      });
+
+      setRuleEvaluationResult({
+        tags: response?.data.filter((r) => r.payload.type === "TAG") ?? [],
+        suggestions:
+          response?.data.filter((r) => r.payload.type === "SUGGESTION") ?? [],
+      });
+    } catch (error) {
+      console.warn("failed to evaluate rules", error);
+    }
+  };
+
+  const initializeBgTagColorMap = () => {
+    const colorMap = new Map();
+    colorMap.set("FATAL", {
+      bg: "#F3C1C1",
+      fg: "#C86A6A",
+      border: "#C86A6A",
+    });
+    colorMap.set("WARNING", {
+      bg: "#F6EAA6",
+      fg: "#BBA947",
+      border: "#BBA947",
+    });
+    colorMap.set("INFO", {
+      bg: "#ADDFC2",
+      fg: "#4E946C",
+      border: "#4E946C",
+    });
+
+    setBgTagColorMapping(colorMap);
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchText(value);
+    const filtered = rows.filter((row) =>
+      row.name.toLowerCase().includes(value)
+    );
+    setFilteredRows(filtered);
   };
 
   const handleQuantityChange = (e) => {
@@ -65,17 +137,19 @@ const Sales = () => {
 
   useEffect(() => {
     loadDishes();
-    console.log("userInfo = ", userInfo);
+    initializeBgTagColorMap();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("rows = ", rows);
-  // }, [rows]);
+  useEffect(() => {
+    if (selectedDish) {
+      evaluateRules(selectedDish.id);
+    }
+  }, [selectedDish]);
 
   const openModal = (dish) => {
     setSelectedDish(dish);
     setAddToCartDetails({
-      dishPortionId: dish.dishPortions[0].id,
+      dishPortionId: dish.dishPortions[0]?.id || 0,
       quantity: 1,
     });
     setIsModalOpen(true);
@@ -95,32 +169,42 @@ const Sales = () => {
       return;
     }
 
-    console.log("payload = ", [addToCartDetails]);
-
     const response = await sendRequest({
       url: `/v1/cart/${cartId}`,
       method: httpMethodTypes.PATCH,
       data: [addToCartDetails],
     });
 
-    console.log("add to cart response = ", response);
+    console.log("Add to cart response =", response);
+    closeModal();
   };
 
   return (
     <div>
       <TopBar />
-      {/* Hero Section */}
-      {/* <div
+      <div
         style={{
           backgroundImage: `url('/images/banner-2.png')`,
           height: "500px",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          marginTop: "45px",
+          marginRight: "45px",
+          marginLeft: "45px",
+          borderRadius: "40px",
         }}
-      ></div> */}
-      <Container sx={{ marginY: 4 }}>
+      ></div>
+      <Container sx={{ marginY: 10 }}>
+        <TextField
+          variant="outlined"
+          fullWidth
+          placeholder="Search for dishes..."
+          value={searchText}
+          onChange={handleSearchChange}
+          sx={{ marginBottom: "20px" }}
+        />
         <Grid container spacing={4}>
-          {rows.map((row) => (
+          {filteredRows.map((row) => (
             <Grid item xs={12} sm={6} md={4} key={row.id}>
               <Card
                 onClick={() => openModal(row)}
@@ -129,7 +213,7 @@ const Sales = () => {
                 <CardMedia
                   component="img"
                   height="180"
-                  image={row.image ?? "/images/dishes/no-image.png"}
+                  image={row.image}
                   alt={row.name}
                 />
                 <CardContent>
@@ -146,7 +230,6 @@ const Sales = () => {
         </Grid>
       </Container>
 
-      {/* Modal */}
       {selectedDish && (
         <Dialog
           open={isModalOpen}
@@ -156,8 +239,8 @@ const Sales = () => {
           PaperProps={{ style: { borderRadius: "4px" } }}
           BackdropProps={{
             style: {
-              backgroundColor: "rgba(0, 0, 0, 0.1)", // Semi-transparent black
-              backdropFilter: "blur(8px)", // Blurred background
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backdropFilter: "blur(8px)",
             },
           }}
         >
@@ -166,11 +249,10 @@ const Sales = () => {
             flexDirection={{ xs: "column", md: "row" }}
             padding="50px"
           >
-            {/* Left Side: Dish Image */}
             <Box flex={1} sx={{ display: "flex" }}>
               <CardMedia
                 component="img"
-                image={selectedDish.image ?? "/images/dishes/no-image.png"}
+                image={selectedDish.image}
                 alt={selectedDish.name}
                 sx={{
                   width: "90%",
@@ -180,7 +262,6 @@ const Sales = () => {
               />
             </Box>
 
-            {/* Right Side: Details */}
             <Box flex={1} display="flex" flexDirection="column" gap={3}>
               <Box>
                 <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -194,7 +275,6 @@ const Sales = () => {
                 </Typography>
               </Box>
 
-              {/* Portion and Quantity Inputs */}
               <Box display="flex" gap={2} mb={3}>
                 <TextField
                   label="Portion"
@@ -221,7 +301,49 @@ const Sales = () => {
                 />
               </Box>
 
-              {/* Add to Cart Button */}
+              {ruleEvaluationResult.tags.length > 0 && (
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Tags
+                    </Typography>
+                  </AccordionSummary>
+                  {ruleEvaluationResult.tags.map((res, index) => (
+                    <AccordionDetails key={index}>
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        backgroundColor={
+                          bgTagColorMapping.get(res.payload.status)?.bg ||
+                          "#EAEAEA"
+                        }
+                        padding="10px"
+                        borderRadius="4px"
+                        border={`1px solid ${
+                          bgTagColorMapping.get(res.payload.status)?.border ||
+                          "#B0B0B0"
+                        }`}
+                      >
+                        <Typography
+                          fontSize="14px"
+                          color={
+                            bgTagColorMapping.get(res.payload.status)?.fg ||
+                            "#B0B0B0"
+                          }
+                        >
+                          {res.payload.text}
+                        </Typography>
+                      </Box>
+                    </AccordionDetails>
+                  ))}
+                </Accordion>
+              )}
+
               <Button
                 variant="contained"
                 color="error"

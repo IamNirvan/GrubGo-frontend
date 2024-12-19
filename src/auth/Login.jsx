@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   setToken,
-  selectUserType,
   setUserType,
+  setUserInfo,
 } from "../redux/features/authSlice";
 import httpMethodTypes from "../constants/httpMethodTypes";
 import useAxios from "../util/useAxios";
@@ -34,12 +34,14 @@ const Login = ({ userType }) => {
 
       console.log("result", result);
 
-      dispatch(setToken(result.data));
+      dispatch(setToken(result.data.token));
+      dispatch(setUserInfo(result.data.userInfo));
       if (userType === userTypes.EMPLOYEE) {
         dispatch(setUserType(userTypes.EMPLOYEE));
         navigate("/dishes");
       } else {
         dispatch(setUserType(userTypes.CUSTOMER));
+        navigate("/v1/customer/dishes");
       }
     } catch (error) {
       if (error.status === 401) {
@@ -145,7 +147,7 @@ const Login = ({ userType }) => {
             {userType === "customer" && (
               <p className="mt-6 text-center text-[14px] text-gray-600">
                 Don't have an account?{" "}
-                <a href="/customer/register" className="font-semibold">
+                <a href="/v1/customer/register" className="font-semibold">
                   Register
                 </a>
               </p>

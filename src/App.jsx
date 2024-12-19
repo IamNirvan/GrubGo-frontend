@@ -7,7 +7,6 @@ import {
 import { ToastContainer } from "react-toastify";
 import Login from "./auth/Login";
 import Landing from "./pages/Landing/Landing";
-import Sales from "./pages/Sales/Sales";
 import Register from "./pages/Register/Register";
 import Dishes from "./pages/Dishes/Dishes";
 import Unauthorized from "./pages/Unauthriozed/Unauthriozed";
@@ -19,10 +18,13 @@ import RuleDetails from "./pages/Rules/RuleDetails";
 import CreateRule from "./pages/Rules/CreateRule";
 import DishMetrics from "./pages/Dishes/DishMetrics";
 import Orders from "./pages/Orders/Orders";
+import BrowseDishes from "./pages/Dishes/BrowseDishes";
+import Checkout from "./pages/Checkout/Checkout";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./redux/features/authSlice";
 import userTypes from "./constants/userTypes";
 import "./app.css";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -34,10 +36,10 @@ function App() {
       />
       {/* <Router>
         <Routes>
-          <Route path="/customer/login" element={<Login />} />
+          <Route path="/v1/customer/login" element={<Login />} />
           <Route path="/customer/home" element={<Landing />} />
-          <Route path="/page/sales" element={<Sales />} />
-          <Route path="/customer/register" element={<Register />} />
+          <Route path="/v1/customer/dishes" element={<Sales />} />
+          <Route path="/v1/customer/register" element={<Register />} />
           <Route path="/page/dishes" element={<Dishes />} />
           <Route path="/page/dishes/:id" element={<DishDetail />} />
           <Route path="/dish/metrics/:id" element={<DishMetrics />} />
@@ -65,28 +67,24 @@ function App() {
             element={<Login userType={userTypes.EMPLOYEE} />}
           />
           <Route
-            path="/customer/login"
+            path="/v1/customer/login"
             element={<Login userType={userTypes.CUSTOMER} />}
           />
-          <Route path="/customer/register" element={<Register />} />
+          <Route path="/v1/customer/register" element={<Register />} />
           <Route
             path="/"
             element={
               useSelector(selectCurrentToken) === null ? (
-                <Navigate to="/customer/login" replace />
+                <Navigate to="/v1/customer/login" replace />
               ) : (
-                <Navigate to="/customer/home" replace />
+                <Navigate to="/v1/customer/dishes" replace />
               )
             }
           />
           <Route element={<PrivateRoute userType={userTypes.CUSTOMER} />}>
-            <Route path="/customer/home" element={<Landing />} />
-            {/* <Route path="/page/sales" element={<Sales />} />
-            <Route path="/page/dishes" element={<Dishes />} />
-            <Route path="/page/dishes/:id" element={<DishDetail />} />
-            <Route path="/dish/metrics/:id" element={<DishMetrics />} />
-            <Route path="/rules" element={<Rules />} />
-            <Route path="/rules/:id" element={<RuleDetails />} /> */}
+            <Route path="/v1/customer/dishes" element={<BrowseDishes />} />
+            <Route path="/v1/customer/checkout" element={<Checkout />} />
+            <Route path="/v1/customer/profile" element={<Profile />} />
             <Route path="/customer/unauthorized" element={<Unauthorized />} />
           </Route>
 

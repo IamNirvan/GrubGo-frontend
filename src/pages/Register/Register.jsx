@@ -62,7 +62,7 @@ const Register = () => {
           allergens: payload.allergens.map((allergen) => allergen.value),
         },
       });
-      navigate("/customer/login");
+      navigate("/v1/customer/login");
     } catch (error) {
       console.error(error);
       toast.error(errorMessage);

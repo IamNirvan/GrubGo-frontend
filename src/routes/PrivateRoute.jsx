@@ -6,7 +6,7 @@ import userTypes from "../constants/userTypes";
 
 const determineLoginURL = (userType) => {
   if (userType === userTypes.CUSTOMER) {
-    return "/customer/login";
+    return "/v1/customer/login";
   }
 
   if (userType === userTypes.EMPLOYEE) {
@@ -16,11 +16,11 @@ const determineLoginURL = (userType) => {
 
 const PrivateRoute = ({ userType }) => {
   const loginURL = determineLoginURL(userType);
-  console.log(userType, loginURL);
-
-  const token = useSelector(selectCurrentToken);
-  console.log("token", token);
-  return token ? <Outlet /> : <Navigate to={loginURL} />;
+  return useSelector(selectCurrentToken) ? (
+    <Outlet />
+  ) : (
+    <Navigate to={loginURL} />
+  );
 };
 
 export default PrivateRoute;

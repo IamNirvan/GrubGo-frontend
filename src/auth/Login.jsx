@@ -174,7 +174,7 @@ const Login = ({ userType }) => {
             >
               Login
             </button>
-            {userType === "customer" && (
+            {selectedOption === userTypes.CUSTOMER && (
               <p className="mt-6 text-center text-[14px] text-gray-600">
                 Don't have an account?{" "}
                 <a href="/v1/customer/register" className="font-semibold">

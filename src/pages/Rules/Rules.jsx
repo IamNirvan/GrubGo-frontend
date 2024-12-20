@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,7 +19,7 @@ import httpMethodTypes from "../../constants/httpMethodTypes";
 
 const Rules = () => {
   const navigate = useNavigate();
-  const { sendRequest } = useAxios();
+  const { loading, sendRequest } = useAxios();
   const [rows, setRows] = useState([]);
 
   const loadRules = async () => {
@@ -50,7 +51,7 @@ const Rules = () => {
   }, []);
 
   const handleRowClick = (id) => {
-    navigate(`/rule/${id}`);
+    navigate(`/v1/rule/${id}`);
   };
 
   const handleCreateRule = () => {
@@ -76,56 +77,64 @@ const Rules = () => {
             Create
           </button>
         </div>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow style={{ backgroundColor: "#FF6B6B" }}>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  ID
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Name
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Fact name
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Created
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Updated
-                </TableCell>
-                {/* <TableCell
+
+        {loading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <CircularProgress />
+          </div>
+        ) : rows.length == 0 ? (
+          <h1>No data</h1>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow style={{ backgroundColor: "#FF6B6B" }}>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    ID
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Name
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Fact name
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Created
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Updated
+                  </TableCell>
+                  {/* <TableCell
                   style={{
                     backgroundColor: "#FF725E",
                     color: "#FFFFFF",
@@ -134,20 +143,20 @@ const Rules = () => {
                 >
                   Actions
                 </TableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  onClick={() => handleRowClick(row.id)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.ruleName}</TableCell>
-                  <TableCell>{row.factName}</TableCell>
-                  <TableCell>{row.created}</TableCell>
-                  <TableCell>{row.updated}</TableCell>
-                  {/* <TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    onClick={() => handleRowClick(row.id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>{row.ruleName}</TableCell>
+                    <TableCell>{row.factName}</TableCell>
+                    <TableCell>{row.created}</TableCell>
+                    <TableCell>{row.updated}</TableCell>
+                    {/* <TableCell>
                     <IconButton
                       color="primary"
                       onClick={() => console.log("Edit action")}
@@ -155,11 +164,12 @@ const Rules = () => {
                       <EditIcon />
                     </IconButton>
                   </TableCell> */}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </div>
     </MainLayout>
   );

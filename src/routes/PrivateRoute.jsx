@@ -4,22 +4,22 @@ import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../redux/features/authSlice";
 import userTypes from "../constants/userTypes";
 
-const determineLoginURL = (userType) => {
-  if (userType === userTypes.CUSTOMER) {
-    return "/v1/customer/login";
-  }
+// const determineLoginURL = (userType) => {
+//   if (userType === userTypes.CUSTOMER) {
+//     return "/v1/customer/login";
+//   }
 
-  if (userType === userTypes.EMPLOYEE) {
-    return "/v1/employee/login";
-  }
-};
+//   if (userType === userTypes.EMPLOYEE) {
+//     return "/v1/employee/login";
+//   }
+// };
 
 const PrivateRoute = ({ userType }) => {
-  const loginURL = determineLoginURL(userType);
+  // const loginURL = determineLoginURL(userType);
   return useSelector(selectCurrentToken) ? (
     <Outlet />
   ) : (
-    <Navigate to={loginURL} />
+    <Navigate to="/v1/login" />
   );
 };
 

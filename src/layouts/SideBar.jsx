@@ -46,36 +46,36 @@ const SideBar = () => {
           <NavLink
             to="/v1/dishes"
             className={({ isActive }) =>
-              `flex items-center p-2 rounded-lg ${
-                isActive ? "bg-[#FF6F61] text-white" : "hover:bg-[#FF6F61]"
+              `flex items-center p-2 rounded-lg transition-all duration-300 ${
+                isActive ? "bg-[#FF6F61] " : "hover:bg-[#FF6F61]"
               }`
             }
           >
-            <Io.IoCarSportOutline className="text-[18px] mr-2" />
+            <Io.IoFastFood className="text-[18px] mr-2" />
             <span>Dishes</span>
           </NavLink>
 
           <NavLink
             to="/v1/rules"
             className={({ isActive }) =>
-              `flex items-center p-2 rounded-lg ${
+              `flex items-center p-2 rounded-lg transition-all duration-300 ${
                 isActive ? "bg-[#FF6F61] text-white" : "hover:bg-[#FF6F61]"
               }`
             }
           >
-            <Bs.BsPrinter className="text-[18px] mr-2" />
+            <Bs.BsFileBinary className="text-[18px] mr-2" />
             <span>Rules</span>
           </NavLink>
 
           <NavLink
             to="/v1/orders"
             className={({ isActive }) =>
-              `flex items-center p-2 rounded-lg ${
+              `flex items-center p-2 rounded-lg  transition-all duration-300 ${
                 isActive ? "bg-[#FF6F61] text-white" : "hover:bg-[#FF6F61]"
               }`
             }
           >
-            <Bs.BsPrinter className="text-[18px] mr-2" />
+            <Bs.BsBox className="text-[18px] mr-2" />
             <span>Orders</span>
           </NavLink>
 

@@ -35,19 +35,16 @@ function App() {
       />
       <Router>
         <Routes>
-          <Route
+          {/* <Route
             path="/v1/employee/login"
             element={<Login userType={userTypes.EMPLOYEE} />}
-          />
+          /> */}
           <Route
-            path="/v1/customer/login"
+            path="/v1/login"
             element={<Login userType={userTypes.CUSTOMER} />}
           />
           <Route path="/v1/customer/register" element={<Register />} />
-          <Route
-            path="/"
-            element={<Navigate to="/v1/customer/login" replace />}
-          />
+          <Route path="/" element={<Navigate to="/v1/login" replace />} />
           <Route element={<PrivateRoute userType={userTypes.CUSTOMER} />}>
             <Route path="/v1/customer/dishes" element={<BrowseDishes />} />
             <Route path="/v1/customer/checkout" element={<Checkout />} />

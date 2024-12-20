@@ -135,6 +135,24 @@ const Sales = () => {
     }));
   };
 
+  // Update the price shown in the modal when the user changes the portion and/or quantity
+  useEffect(() => {
+    if (selectedDish) {
+      const selectedPortion = selectedDish.dishPortions.find(
+        (p) => p.id === addToCartDetails.dishPortionId
+      );
+      console.log("portion = ", selectedPortion);
+
+      if (selectedPortion) {
+        const quantity = addToCartDetails.quantity;
+        setSelectedDish((prev) => ({
+          ...prev,
+          price: selectedPortion.price * quantity,
+        }));
+      }
+    }
+  }, [addToCartDetails]);
+
   useEffect(() => {
     loadDishes();
     initializeBgTagColorMap();
@@ -302,7 +320,7 @@ const Sales = () => {
               </Box>
 
               {ruleEvaluationResult.tags.length > 0 && (
-                <Accordion>
+                <Accordion defaultExpanded>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
@@ -313,6 +331,49 @@ const Sales = () => {
                     </Typography>
                   </AccordionSummary>
                   {ruleEvaluationResult.tags.map((res, index) => (
+                    <AccordionDetails key={index}>
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        backgroundColor={
+                          bgTagColorMapping.get(res.payload.status)?.bg ||
+                          "#EAEAEA"
+                        }
+                        padding="10px"
+                        borderRadius="4px"
+                        border={`1px solid ${
+                          bgTagColorMapping.get(res.payload.status)?.border ||
+                          "#B0B0B0"
+                        }`}
+                      >
+                        <Typography
+                          fontSize="14px"
+                          color={
+                            bgTagColorMapping.get(res.payload.status)?.fg ||
+                            "#B0B0B0"
+                          }
+                        >
+                          {res.payload.text}
+                        </Typography>
+                      </Box>
+                    </AccordionDetails>
+                  ))}
+                </Accordion>
+              )}
+
+              {ruleEvaluationResult.suggestions.length > 0 && (
+                <Accordion defaultExpanded>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Suggestions
+                    </Typography>
+                  </AccordionSummary>
+                  {ruleEvaluationResult.suggestions.map((res, index) => (
                     <AccordionDetails key={index}>
                       <Box
                         display="flex"

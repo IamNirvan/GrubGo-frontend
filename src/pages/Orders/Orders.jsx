@@ -11,6 +11,7 @@ import {
   Paper,
   IconButton,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -59,7 +60,7 @@ const StatusBadge = ({ status }) => {
 const Orders = () => {
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
-  const { errorMessage, sendRequest } = useAxios();
+  const { loading, errorMessage, sendRequest } = useAxios();
 
   const loadOrders = async () => {
     console.log("Loading orders...");
@@ -125,68 +126,81 @@ const Orders = () => {
     <MainLayout>
       <div className="font-[Poppins] p-[50px]">
         <h1 className="text-[30px] font-bold mb-5">Orders</h1>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {["ID", "Total", "Status", "Date", "Quick Actions"].map(
-                  (header) => (
-                    <TableCell
-                      key={header}
-                      style={{
-                        backgroundColor: "#FF725E",
-                        color: "#FFFFFF",
-                        padding: "20px",
-                      }}
-                    >
-                      {header}
-                    </TableCell>
-                  )
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.total}</TableCell>
-                  <TableCell>
-                    <StatusBadge status={row.status} />
-                  </TableCell>
-                  <TableCell>{row.date}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="success"
-                      onClick={() => handleMarkAsPaid(row.id, "PAID")}
-                    >
-                      <AttachMoneyIcon />
-                    </IconButton>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleMarkAsCompleted(row.id, "COMPLETED")}
-                    >
-                      <CheckCircleIcon />
-                    </IconButton>
-                    <IconButton
-                      color="info"
-                      onClick={() =>
-                        handleMarkAsInProgress(row.id, "IN_PROGRESS")
-                      }
-                    >
-                      <AutorenewIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleMarkAsCancelled(row.id, "CANCELLED")}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-                  </TableCell>
+
+        {loading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <CircularProgress />
+          </div>
+        ) : rows.length == 0 ? (
+          <h1>No data</h1>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {["ID", "Total", "Status", "Date", "Quick Actions"].map(
+                    (header) => (
+                      <TableCell
+                        key={header}
+                        style={{
+                          backgroundColor: "#FF725E",
+                          color: "#FFFFFF",
+                          padding: "20px",
+                        }}
+                      >
+                        {header}
+                      </TableCell>
+                    )
+                  )}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>{row.total}</TableCell>
+                    <TableCell>
+                      <StatusBadge status={row.status} />
+                    </TableCell>
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        color="success"
+                        onClick={() => handleMarkAsPaid(row.id, "PAID")}
+                      >
+                        <AttachMoneyIcon />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        onClick={() =>
+                          handleMarkAsCompleted(row.id, "COMPLETED")
+                        }
+                      >
+                        <CheckCircleIcon />
+                      </IconButton>
+                      <IconButton
+                        color="info"
+                        onClick={() =>
+                          handleMarkAsInProgress(row.id, "IN_PROGRESS")
+                        }
+                      >
+                        <AutorenewIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() =>
+                          handleMarkAsCancelled(row.id, "CANCELLED")
+                        }
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </div>
     </MainLayout>
   );

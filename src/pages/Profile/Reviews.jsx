@@ -16,8 +16,9 @@ import {
   DialogActions,
   TextField,
   Button,
+  CircularProgress,
 } from "@mui/material";
-import BarChartIcon from "@mui/icons-material/BarChart";
+import { AddComment, Padding } from "@mui/icons-material";
 import useAxios from "../../util/useAxios";
 import httpMethodTypes from "../../constants/httpMethodTypes";
 import { selectUserInfo } from "../../redux/features/authSlice";
@@ -26,7 +27,7 @@ import { toast } from "react-toastify";
 
 const Reviews = () => {
   const userInfo = useSelector(selectUserInfo);
-  const { sendRequest } = useAxios();
+  const { loading, sendRequest } = useAxios();
   const [rows, setRows] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [currentDish, setCurrentDish] = useState({
@@ -126,54 +127,70 @@ const Reviews = () => {
     }
   };
 
-  return rows ? (
+  return (
     <div className="w-[90%] h-[100%] font-[Poppins]">
       {/* Table for dishes */}
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {["Id", "Name", "Ordered Date", "Actions"].map((header) => (
-                <TableCell
-                  key={header}
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.dishId} className="cursor-pointer">
-                <TableCell>{row.dishId}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.orderDate}</TableCell>
-                <TableCell>
-                  <IconButton
-                    color="primary"
-                    aria-label="add-review"
-                    onClick={(event) =>
-                      handleReview(
-                        event,
-                        row.dishId,
-                        row.name,
-                        row.dishPortionCartId
-                      )
-                    }
+
+      {loading ? (
+        <div className="w-full h-full flex items-center justify-center">
+          <CircularProgress />
+        </div>
+      ) : rows.length == 0 ? (
+        <div className="w-full min-h-[80%] flex flex-col items-center">
+          <img
+            src="/images/no_data.png"
+            alt="No data"
+            className="w-[500px] h-[500px]"
+          />
+          <h3 className="text-[20px]">No data</h3>
+        </div>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {["Id", "Name", "Ordered Date", "Actions"].map((header) => (
+                  <TableCell
+                    key={header}
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
                   >
-                    <BarChartIcon style={{ cursor: "pointer" }} />
-                  </IconButton>
-                </TableCell>
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow key={row.dishId} className="cursor-pointer">
+                  <TableCell>{row.dishId}</TableCell>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.orderDate}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      aria-label="add-review"
+                      onClick={(event) =>
+                        handleReview(
+                          event,
+                          row.dishId,
+                          row.name,
+                          row.dishPortionCartId
+                        )
+                      }
+                    >
+                      <AddComment style={{ cursor: "pointer" }} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       {/* Review Modal */}
       <Dialog
@@ -214,21 +231,25 @@ const Reviews = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">
+          {/* <Button onClick={handleCloseModal} color="secondary">
             Cancel
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={handleSubmitReview}
             variant="contained"
             color="primary"
           >
             Submit Review
-          </Button>
+          </Button> */}
+          <button
+            onClick={handleSubmitReview}
+            className="w-full mt-8 py-3 bg-[#FF725E] text-[16px] text-white font-bold rounded-lg hover:bg-[#FF725E] focus:outline-none focus:ring-2 focus:ring-[#FF725E]"
+          >
+            Submit Review
+          </button>
         </DialogActions>
       </Dialog>
     </div>
-  ) : (
-    <h1 className="text-[30px] mb-[20px]">No pending reviews</h1>
   );
 };
 

@@ -11,6 +11,7 @@ import {
   Paper,
   IconButton,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import useAxios from "../../util/useAxios";
@@ -20,7 +21,7 @@ import "@fontsource/poppins";
 const Dishes = () => {
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
-  const { sendRequest } = useAxios();
+  const { loading, sendRequest } = useAxios();
 
   const loadDishes = async () => {
     console.log("Loading dishes...");
@@ -51,12 +52,12 @@ const Dishes = () => {
   }, []);
 
   const handleRowClick = (id) => {
-    navigate(`/dish/${id}`);
+    navigate(`/v1/dish/${id}`);
   };
 
   const handleBarChartClick = (event, dishId) => {
     event.stopPropagation();
-    navigate(`/dish/metrics/${dishId}`);
+    navigate(`/v1/dish/metrics/${dishId}`);
   };
 
   const handleCreateDish = () => {
@@ -90,102 +91,110 @@ const Dishes = () => {
             Create
           </button>
         </div>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  ID
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Name
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  No. of reviews
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  No. of portions
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Created
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Updated
-                </TableCell>
-                <TableCell
-                  style={{
-                    backgroundColor: "#FF725E",
-                    color: "#FFFFFF",
-                    padding: "20px",
-                  }}
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={() => handleRowClick(row.id)}
-                  className="cursor-pointer"
-                >
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.noOfReviews}</TableCell>
-                  <TableCell>{row.noOfPortions}</TableCell>
-                  <TableCell>{row.created}</TableCell>
-                  <TableCell>{row.updated}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="primary"
-                      aria-label="view"
-                      onClick={(event) => handleBarChartClick(event, row.id)}
-                    >
-                      <BarChartIcon style={{ cursor: "pointer" }} />
-                    </IconButton>
+        {loading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <CircularProgress />
+          </div>
+        ) : rows.length == 0 ? (
+          <h1>No data</h1>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    ID
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Name
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    No. of reviews
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    No. of portions
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Created
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Updated
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor: "#FF725E",
+                      color: "#FFFFFF",
+                      padding: "20px",
+                    }}
+                  >
+                    Actions
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    onClick={() => handleRowClick(row.id)}
+                    className="cursor-pointer"
+                  >
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.noOfReviews}</TableCell>
+                    <TableCell>{row.noOfPortions}</TableCell>
+                    <TableCell>{row.created}</TableCell>
+                    <TableCell>{row.updated}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        color="primary"
+                        aria-label="view"
+                        onClick={(event) => handleBarChartClick(event, row.id)}
+                      >
+                        <BarChartIcon style={{ cursor: "pointer" }} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </div>
     </MainLayout>
   );

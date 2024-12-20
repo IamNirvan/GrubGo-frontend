@@ -71,7 +71,7 @@ const CartModal = ({ onClose }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-[4px] w-[490px] text-left shadow-xl font-[Poppins]">
+    <div className="bg-white p-6 rounded-[4px] w-[500px] text-left shadow-xl font-[Poppins]">
       {/* Close Button */}
       <button
         className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
@@ -103,8 +103,9 @@ const CartModal = ({ onClose }) => {
                   >
                     {dish.quantity}
                   </p>
-                  <div>
-                    {dish.dishName} ({dish.portionName})
+                  <div className="flex flex-col">
+                    <p className="overflow-hidden">{dish.dishName}</p>
+                    <p className="text-[12px]">({dish.portionName})</p>
                   </div>
                 </div>
               </div>

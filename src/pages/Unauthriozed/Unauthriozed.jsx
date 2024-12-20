@@ -21,7 +21,7 @@ const Unauthorized = () => {
 
   const logout = () => {
     localStorage.clear();
-    navigate("/v1/customer/login");
+    navigate("/v1/login");
   };
 
   // const getAuthUser = async () => {

@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
-import { Typography, Box, Card, CardContent, Grid } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -100,6 +107,7 @@ const DishMetrics = () => {
     ],
   });
   const [sentimentAnalysisResults, setSentimentAnalysisResults] = useState([]);
+  const [sentimentDataLoading, setSentimentDataLoading] = useState(true);
 
   const loadMetrics = async () => {
     const response = await sendRequest({
@@ -127,11 +135,18 @@ const DishMetrics = () => {
   };
 
   const loadSentimentAnalysisResults = async () => {
-    const response = await sendRequest({
-      url: `/v1/analyse/reviews/sentiment/dish/${id}`,
-      method: httpMethodTypes.POST,
-    });
-    setSentimentAnalysisResults(response.data);
+    setSentimentDataLoading(true);
+    try {
+      const response = await sendRequest({
+        url: `/v1/analyse/reviews/sentiment/dish/${id}`,
+        method: httpMethodTypes.POST,
+      });
+      setSentimentAnalysisResults(response.data);
+    } catch (error) {
+      console.log("Error fetching sentiment analysis results", error);
+    } finally {
+      setSentimentDataLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -305,15 +320,21 @@ const DishMetrics = () => {
               flex: 1,
             }}
           >
-            {sentimentAnalysisResults.map((item, index) => (
-              <SentimentCard
-                key={index}
-                aspect={item.span}
-                positive={item.positiveRatio}
-                neutral={item.neutralRatio}
-                negative={item.negativeRatio}
-              />
-            ))}
+            {sentimentDataLoading ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <CircularProgress />
+              </div>
+            ) : (
+              sentimentAnalysisResults.map((item, index) => (
+                <SentimentCard
+                  key={index}
+                  aspect={item.span}
+                  positive={item.positiveRatio}
+                  neutral={item.neutralRatio}
+                  negative={item.negativeRatio}
+                />
+              ))
+            )}
           </Box>
         </Box>
       </Box>
